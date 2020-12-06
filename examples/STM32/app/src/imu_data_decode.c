@@ -54,7 +54,6 @@ static void on_data_received(packet_t *pkt)
                 break;
 				
             case kItemGyrRaw:
-			case kItemGyrRaw_yunjing:
                 bitmap |= BIT_VALID_GYR;
                 stream2int16(temp, p + offset + 1);
                 receive_imusol.gyr[0] = (float)temp[0] / 10;
