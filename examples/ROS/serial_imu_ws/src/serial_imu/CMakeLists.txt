@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   turtlesim
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -76,6 +77,9 @@ find_package(catkin REQUIRED COMPONENTS
 #   std_msgs
 # )
 
+add_message_files(FILES Imu_0x91_msg.msg Imu_0x62_msg.msg)
+generate_messages(DEPENDENCIES std_msgs)
+
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################
@@ -108,7 +112,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES serial_imu
-#  CATKIN_DEPENDS roscpp rospy serial std_msgs
+  CATKIN_DEPENDS roscpp rospy serial std_msgs message_runtime
 #  DEPENDS system_lib
 )
 
@@ -156,8 +160,11 @@ add_executable(serial_imu src/serial_imu.cpp src/imu_data_decode.c src/packet.c)
 add_definitions(-std=c99)
 target_link_libraries(serial_imu ${catkin_LIBRARIES})
 
-add_executable(imu_subscriber src/subscriber.cpp src/imu_data_decode.c src/packet.c)
-target_link_libraries(imu_subscriber ${catkin_LIBRARIES})
+add_executable(sub_0x91 src/sub_0x91.cpp src/imu_data_decode.c src/packet.c)
+target_link_libraries(sub_0x91 ${catkin_LIBRARIES})
+
+add_executable(sub_spec src/sub_spec.cpp)
+target_link_libraries(sub_spec ${catkin_LIBRARIES})
 
 #############
 ## Install ##
