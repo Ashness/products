@@ -18,8 +18,6 @@ Ubuntu 系统自带CP210x的驱动，默认不需要安装串口驱动。将调�
 2. 输入 ls /dev 查看是挂载成功USB转串口设备
 3. 查看是否存在  ttyUSBx 这个设备文件。x表示USB设备号，由于Ubuntu USB设备号为从零开始依次累加，所以多个设备每次开机后设备号是不固定的，需要确定设备的设备号。下图为没有插入HI226/HI229评估板时的dev设备列表，这个时候，dev目录下并没有名为 __ttyUSB__ 文件
 
-![](./img/1.png)
-
 4. 插入USB线，连接调试板，然后再次执行ls  /dev。 dev目录下多了一个设备, 如图：
 
 ![](./img/2.png)
@@ -80,19 +78,13 @@ $:/opt/ros/kinetic/share/serial
 ```shell
 $ roslaunch imu_launch imu_msg.launch imu_package:=0x91
 ```
-2.如果执行失败，提示：
-
-![](./img/3.png)
-
-​	这是由于没有配置环境的原因导致的，解决办法就是在当前终端执行`source ~/serial_imu_ws/devel/setup.bash`命令。但是这个办法并不能一次性解决，每次开启一个终端，运行新节点都需要为该终端设置环境变量。所以按照如下方式，可以不用这么麻烦： 执行`gedit ~/.bashrc`命令，打开一个文件，然后在这个文件的末尾加入ROS程序注册命令。(serial_imu_ws_dir为serial_imu_ws所在目录)
+2. 配置环境
 
 ```shell
 $source <serial_imu_ws_dir>/devel/setup.bash
 ```
 
-
-
-3.执行成功后，就可以看到所有的信息：
+3. 执行成功后，就可以看到所有的信息：
 
 ```txt
 
