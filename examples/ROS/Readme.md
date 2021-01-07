@@ -14,11 +14,9 @@ Ubuntu 系统自带CP210x的驱动，默认不需要安装串口驱动。将调�
 
 检查USB-UART设备是否被Ubantu识别：
 
-1. 打开命令行(ctrl + alt + t)
-2. 输入 ls /dev 查看是挂载成功USB转串口设备
-3. 查看是否存在  ttyUSBx 这个设备文件。x表示USB设备号，由于Ubuntu USB设备号为从零开始依次累加，所以多个设备每次开机后设备号是不固定的，需要确定设备的设备号。下图为没有插入HI226/HI229评估板时的dev设备列表，这个时候，dev目录下并没有名为 __ttyUSB__ 文件
-
-4. 插入USB线，连接调试板，然后再次执行ls  /dev。 dev目录下多了一个设备, 如图：
+1. 打开终端，输入`ls /dev`,先查看已经存在的串口设备。
+2. 查看是否存在  ttyUSBx 这个设备文件。x表示USB设备号，由于Ubuntu USB设备号为从零开始依次累加，所以多个设备每次开机后设备号是不固定的，需要确定设备的设备号。
+4. 插入USB线，连接调试板，然后再次执行`ls /dev`。 dev目录下多了一个设备, 如图：
 
 ![](./img/2.png)
 
@@ -50,7 +48,7 @@ $:/opt/ros/kinetic/share/serial
 
 1. 打开终端进入/examples/ROS/serial_imu_ws 目录
 
-2. 执行catkin_make命令，编译成功后出现完成度100%的信息。
+2. 执行`catkin_make`命令，编译成功后出现完成度100%的信息。
 
 ## 4. 修改串口波特率和设备号
 
@@ -62,7 +60,7 @@ $:/opt/ros/kinetic/share/serial
 #define BAUD       (115200)
 ```
 
-注意修改后需要回到serial_imu_ws目录下，重新执行catkin_make命令
+注意修改后需要回到serial_imu_ws目录下，重新执行`catkin_make`命令
 
 ## 5. 显示数据
 本例程提供了三种查看数据方式：
@@ -73,12 +71,12 @@ $:/opt/ros/kinetic/share/serial
 
 ### 	5.1：输出IMU原始数据
 
-1.打开另一个终端，执行`roscore`开启ROS
+1.打开另一个终端，执行：
 
 ```shell
 $ roslaunch imu_launch imu_msg.launch imu_package:=0x91
 ```
-2. 配置环境
+2. 如果执行失败，提示找不到相应的launch文件，则需要配置环境，在当前终端执行：
 
 ```shell
 $source <serial_imu_ws_dir>/devel/setup.bash
@@ -169,9 +167,3 @@ $sudo vi ros-latest.list
 然后另起一行输入： deb https://mirrors.tuna.tsinghua.edu.cn/ros/ubuntu/ xenial main
 
 然后保存，关闭文件。打开终端，执行`sudo apt-get update`,然后执行`sduo apt-get install ros-kinetic-serial`.
-
-2.串口打开失败，权限不够。执行chmod命令，开启权限。
-
-```shell
-$ sudo chmod 777 /dev/ttyUSB0
-```
