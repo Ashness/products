@@ -46,6 +46,8 @@ $ sudo apt-get install ros-kinetic-serial
 $:/opt/ros/kinetic/share/serial
 ```
 
+​	3.如果出现装不上，可以到本文档的最后查看本人遇到的问题和解决方式。
+
 ## 3. 编译serial_imu_ws工作空间
 
 1. 打开终端进入/examples/ROS/serial_imu_ws 目录
@@ -78,7 +80,19 @@ $:/opt/ros/kinetic/share/serial
 ```shell
 $ roslaunch imu_launch imu_msg.launch imu_package:=0x91
 ```
-2.执行成功后，就可以看到所有的信息：
+2.如果执行失败，提示：
+
+![](./img/3.png)
+
+​	这是由于没有配置环境的原因导致的，解决办法就是在当前终端执行`source ~/serial_imu_ws/devel/setup.bash`命令。但是这个办法并不能一次性解决，每次开启一个终端，运行新节点都需要为该终端设置环境变量。所以按照如下方式，可以不用这么麻烦： 执行`gedit ~/.bashrc`命令，打开一个文件，然后在这个文件的末尾加入ROS程序注册命令。(serial_imu_ws_dir为serial_imu_ws所在目录)
+
+```shell
+$source <serial_imu_ws_dir>/devel/setup.bash
+```
+
+
+
+3.执行成功后，就可以看到所有的信息：
 
 ```txt
 
@@ -92,6 +106,8 @@ $ roslaunch imu_launch imu_msg.launch imu_package:=0x91
 Quat(W X Y Z):   0.770    0.066   -0.611   -0.172
 
 ```
+
+
 
 ### 	5.2：输出ROS标准 Imu.msg
 
@@ -141,16 +157,28 @@ git clone -b indigo https://github.com/ccny-ros-pkg/imu_tools.git
 
 ![](./img/4.png)
 ## 6. FAQ
-1. 如果在执行`rosrun serial_imu serial_imu`时候，出现如下错误：
-![](./img/3.png)
+​	1.如果是第一次装ROS serial包，有很大的可能会失败，因为本人在装的时候，遇到了这个问题，这里把解决方法提供出来，节约大家的时间。
 
-这是由于没有配置环境的原因导致的，解决办法就是在当前终端执行`source ~/serial_imu_ws/devel/setup.bash`命令。但是这个办法并不能一次性解决，每次开启一个终端，运行新节点都需要为该终端设置环境变量。所以按照如下方式，可以不用这么麻烦： 执行`gedit ~/.bashrc`命令，打开一个文件，然后在这个文件的末尾加入ROS程序注册命令。(serial_imu_ws_dir为serial_imu_ws所在目录)
+当在终端执行`sudo apt-get install ros-kinetic-serial`这条命令的时候，有可能会提示你
+
+![](./img/5.png)
+
+为了提供素材，serial故意输错的。
+
+本人的解决办法是：
 
 ```shell
-$ source <serial_imu_ws_dir>/devel/setup.bash
+$cd /etc/apt/sources.list.d
+$sudo vi ros-latest.list
 ```
 
-2. 串口打开失败，权限不够。执行chmod命令，开启权限。
+打开这个文件之后，一般这个文件中只有一个可用的源，就是指没有被注释的，现在把它注释掉，在它的开头输入__#__即可注释。
+
+然后另起一行输入： deb https://mirrors.tuna.tsinghua.edu.cn/ros/ubuntu/ xenial main
+
+然后保存，关闭文件。打开终端，执行`sudo apt-get update`,然后执行`sduo apt-get install ros-kinetic-serial`.
+
+2.串口打开失败，权限不够。执行chmod命令，开启权限。
 
 ```shell
 $ sudo chmod 777 /dev/ttyUSB0
