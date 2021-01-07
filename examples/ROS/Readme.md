@@ -58,8 +58,8 @@ $:/opt/ros/kinetic/share/serial
 
 2. 如果您需要更高的输出频率，请编辑serial_imu.cpp文件，修改serial_imu.cpp文件中的宏定义，改为其他波特率。	
 ```c
-#define IMU_SERIAL "/dev/ttyUSB0"
-#define BAUD 115200
+#define IMU_SERIAL ("/dev/ttyUSB0")
+#define BAUD       (115200)
 ```
 
 注意修改后需要回到serial_imu_ws目录下，重新执行catkin_make命令
@@ -67,29 +67,18 @@ $:/opt/ros/kinetic/share/serial
 ## 5. 显示数据
 本例程提供了三种查看数据方式：
 
-1. 第一种方式是显示所有的数据信息，通过printf把imu上传的所有的信息都打印到终端上，便于查看数据。
+1. 显示所有的数据信息，便于查看数据。
 2. 打印ROS标准imu_msg 数据
 3. rviz工具实现可视化
 
 ### 	5.1：输出IMU原始数据
 
-1. 打开另一个终端，执行`roscore`开启ROS
-```shell
-$ roscore
-```
-2. 回到serial_imu_ws文件夹下 执行 
+1.打开另一个终端，执行`roscore`开启ROS
 
 ```shell
-$ source devel/setup.bash
+$ roslaunch imu_launch imu_msg.launch imu_package:=0x91
 ```
-
-2. 执行启动rosrun 启动接受程序
-
-```shell
-$ rosrun serial_imu serial_imu
-```
-
-执行成功后，就可以看到所有的信息：
+2.执行成功后，就可以看到所有的信息：
 
 ```txt
 
@@ -101,7 +90,6 @@ $ rosrun serial_imu serial_imu
       Mag(uT):    0.00     0.00     0.00
    Eul(R P Y):   52.01   -66.63   -60.77
 Quat(W X Y Z):   0.770    0.066   -0.611   -0.172
-Pleaes enter ctrl + 'c' to quit....
 
 ```
 
@@ -141,7 +129,7 @@ linear_acceleration_covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 2. 同上节，使能模块四元数输出
 3. 进入serial_imu_ws，执行`roslaunch imu_launch imu_rviz.launch`命令，执行成功后，rviz工具被打开。
 4. 先点击左下角的Add标签，然后在弹出窗口中，选择 By display type标签，查找rviz_imu_plugin；找到之后，选择它下面的imu标签，点击OK, 这时，我们可以看到rviz的左侧的展示窗口中已经成功添加上了Imu的标签。在FixedFrame中填入**base_link** 。topic中添加 **/IMU_data**。这时，可以看到坐标系随传感器改变而改变。
-5. ​	可以从这里下载rviz的工具：
+5. ​	可以从这里下载rviz的工具,这是ROS官方的一个rviz插件：
 
 ```shell
 git clone -b indigo https://github.com/ccny-ros-pkg/imu_tools.git
