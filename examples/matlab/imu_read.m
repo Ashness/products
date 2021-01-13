@@ -11,6 +11,7 @@ PORT = 'COM4';
 %% 串口选择
 if length(serialportlist) >=1 %发现多个串口
     fprintf("可用串口:%s\n", serialportlist);
+    fprintf("请选择串口，更改PORT变量\n");
 end
 
 if length(serialportlist) == 1 %只有一个串口
