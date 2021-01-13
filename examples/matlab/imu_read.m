@@ -31,8 +31,7 @@ s = serialport(PORT, DEFALUT_BAUD); %创建串口
 %configureCallback(s,"byte",100,@callbackFcn)  %串口事件回调设置
 
 while true
-    len = s.NumBytesAvailable;
-    if len > 0
+    if  s.NumBytesAvailable > 0
         data = read(s, s.NumBytesAvailable,"uint8"); %读取还串口数据
         [imu_data, new_data_rdy] = parse_fame(data); %解析串口数据
         if new_data_rdy == 1
@@ -100,7 +99,7 @@ end
 % 拆包一帧，并校验CRC
 function [imu_data, new_data_rdy] = parse_fame(data)
 imu_data = 0;
-new_data_rdy = 0;
+new_data_rdy = 0; %数据接受成功标准，成功接收1帧:new_data_rdy=1, else: new_data_rdy=0
 
 persistent current_state; %状态机
 if isempty(current_state)
