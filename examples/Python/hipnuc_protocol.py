@@ -165,19 +165,6 @@ def _parse_data_packet_0xD0(data_section:list,node_num = None):
     return int_eul
 
 
-def _parse_data_packet_0x60(data_section:list,node_num = None):
-    test_8f_list = []
-    for pos in range(8):
-        t_pos = pos * 4
-        test_f = float(struct.unpack("<f", bytes(data_section[t_pos:t_pos + 4]))[0])
-
-        test_8f_list.append(test_f)
-
-    test_8f = {
-        "test_8f": test_8f_list,
-    }
-
-    return test_8f
 
 def _parse_data_packet_0xF0(data_section:list,node_num = None):
     prs_list = []
@@ -459,13 +446,6 @@ data_packet_properties = {
         "parse method": _parse_data_packet_0xD0,
         "gw_data": False
     },
-    0x60: {
-        "type": "test_8f",
-        "id_len": 1,
-        "data_len": 32,
-        "parse method": _parse_data_packet_0x60,
-        "gw_data": False
-    },
     0xF0: {
         "type": "prs",
         "id_len": 1,
@@ -554,7 +534,7 @@ def _verify_frame_length(buffer_list:list, header_pos):
     # 获取到帧长度
     frame_len = int(struct.unpack("<h", bytes(buffer_list[header_pos + 2:header_pos + 4]))[0])
     # 判断帧长度是否合法
-    if frame_len >= 1024:
+    if frame_len >= 4096:
         raise HipnucFrame_ErrorFrame_Exception
     elif frame_len + header_pos + 6 > len(buffer_list) :
         raise  HipnucFrame_NotCompleted_Exception

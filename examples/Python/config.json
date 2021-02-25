@@ -1,8 +1,12 @@
 {
-    "port": "COM60",
+    "port": "COM26",
     "baudrate": 115200,
     "report_datatype": {
       "imusol": true,
-      "gwsol": true
+      "gwsol": true,
+      "acc": true,
+      "gyr": true,
+      "int_eul": true,
+      "quat": true
     }
 }
