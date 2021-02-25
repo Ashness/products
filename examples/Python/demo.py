@@ -11,20 +11,20 @@ res_file = 'res.txt'
 
 if __name__ == '__main__':
 
-    HI221GW = hipnuc_module('./config.json')
+    dev = hipnuc_module('./config.json')
     if os.path.exists(res_file):
       os.remove(res_file)
     f = open(res_file,'w')
     print ('write data to ' + res_file + '\n')
 try:
     while True:
-        data = HI221GW.get_module_data()
+        data = dev.get_module_data()
         #print(data)
         f.write(str(data))
         f.write('\n')
         #time.sleep(0.10)
 except KeyboardInterrupt:
     print("Press Ctrl-C to terminate while statement")
-    HI221GW.close()
+    dev.close()
     f.close()
     pass
