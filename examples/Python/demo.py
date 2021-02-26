@@ -1,30 +1,34 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-' a test module '
-
 from hipnuc_module import *
 import time
-import os
 
-res_file = 'res.txt'
+
+log_file = 'chlog.csv'
 
 if __name__ == '__main__':
 
-    dev = hipnuc_module('./config.json')
-    if os.path.exists(res_file):
-      os.remove(res_file)
-    f = open(res_file,'w')
-    print ('write data to ' + res_file + '\n')
-try:
+    m_IMU = hipnuc_module('./config.json')
+    print("Press Ctrl-C to terminate while statement.")
+
+try: 
+    #create csv file
+    m_IMU.create_csv(log_file)
+    
     while True:
-        data = dev.get_module_data()
-        #print(data)
-        f.write(str(data))
-        f.write('\n')
-        #time.sleep(0.10)
+        try:
+            data = m_IMU.get_module_data(10)
+            
+            #write to file as csv format, only work for 0x91, 0x62(IMUSOL), or there will be error
+            m_IMU.write2csv(data, log_file)
+        
+            #time.sleep(0.10)
+        except:   
+            print("Error")
+            m_IMU.close()
+            break
+
 except KeyboardInterrupt:
-    print("Press Ctrl-C to terminate while statement")
-    dev.close()
-    f.close()
-    pass
+            print("Serial is closed.")
+            m_IMU.close()
+            pass

@@ -6,6 +6,7 @@
 import threading
 import struct
 import datetime
+import time
 
 class HipnucFrame_Exception(Exception):
     def __init__(self,err='HI221GW Frame Error'):
@@ -29,7 +30,6 @@ def _parse_data_packet_0x90(data_section:list,node_num = None):
     }
     return module_id
 
-
 def _parse_data_packet_0xD1(data_section:list,node_num = None):
     quaternion_list = []
 
@@ -45,10 +45,10 @@ def _parse_data_packet_0xD1(data_section:list,node_num = None):
     Z = float(struct.unpack("<f", bytes(data_section[t_pos:t_pos + 4]))[0])
 
     temp_dic = {
-        "W":W,
-        "X":X,
-        "Y":Y,
-        "Z":Z
+        "W":round(W,3),
+        "X":round(X,3),
+        "Y":round(Y,3),
+        "Z":round(Z,3)
     }
     quaternion_list.append(temp_dic)
 
@@ -57,7 +57,6 @@ def _parse_data_packet_0xD1(data_section:list,node_num = None):
     }
 
     return quaternion
-
 
 def _parse_data_packet_0xA0(data_section:list,node_num = None):
     acc_list = []
@@ -72,9 +71,9 @@ def _parse_data_packet_0xA0(data_section:list,node_num = None):
     Z = int(struct.unpack("<h", bytes(data_section[t_pos:t_pos + 2]))[0])
 
     temp_dic = {
-        "X":X,
-        "Y":Y,
-        "Z":Z
+        "X":round(X,3),
+        "Y":round(Y,3),
+        "Z":round(Z,3)
     }
     acc_list.append(temp_dic)
 
@@ -83,8 +82,6 @@ def _parse_data_packet_0xA0(data_section:list,node_num = None):
     }
 
     return acc
-
-
 
 def _parse_data_packet_0xB0(data_section:list,node_num = None):
     gyr_list = []
@@ -99,9 +96,9 @@ def _parse_data_packet_0xB0(data_section:list,node_num = None):
     Z = int(struct.unpack("<h", bytes(data_section[t_pos:t_pos + 2]))[0])
 
     temp_dic = {
-        "X":X,
-        "Y":Y,
-        "Z":Z
+        "X":round(X,3),
+        "Y":round(Y,3),
+        "Z":round(Z,3)
     }
     gyr_list.append(temp_dic)
 
@@ -124,9 +121,9 @@ def _parse_data_packet_0xC0(data_section:list,node_num = None):
     Z = int(struct.unpack("<h", bytes(data_section[t_pos:t_pos + 2]))[0])
 
     temp_dic = {
-        "X":X,
-        "Y":Y,
-        "Z":Z
+        "X":round(X,3),
+        "Y":round(Y,3),
+        "Z":round(Z,3)
     }
     mag_list.append(temp_dic)
 
@@ -142,43 +139,27 @@ def _parse_data_packet_0xD0(data_section:list,node_num = None):
     # for pos in range(node_num):
     pos = 0
     t_pos = pos * 6
-    Pitch = int(struct.unpack("<h", bytes(data_section[t_pos:t_pos + 2]))[0])
+    Pitch = struct.unpack("<h", bytes(data_section[t_pos:t_pos + 2]))[0]
     Pitch = Pitch/100
     t_pos += 2
-    Roll = int(struct.unpack("<h", bytes(data_section[t_pos:t_pos + 2]))[0])
+    Roll = struct.unpack("<h", bytes(data_section[t_pos:t_pos + 2]))[0]
     Roll = Roll/100
     t_pos += 2
-    Yaw = int(struct.unpack("<h", bytes(data_section[t_pos:t_pos + 2]))[0])
+    Yaw = struct.unpack("<h", bytes(data_section[t_pos:t_pos + 2]))[0]
     Yaw = Yaw/10
 
     temp_dic = {
-        "Pitch":Pitch,
-        "Roll":Roll,
-        "Yaw":Yaw
+        "Pitch":round(Pitch,2),
+        "Roll":round(Roll,2),
+        "Yaw":round(Yaw,2)
     }
     eul_list.append(temp_dic)
 
-    int_eul = {
-        "int_eul":eul_list
+    euler = {
+        "euler":eul_list
     }
 
-    return int_eul
-
-
-
-def _parse_data_packet_0xF0(data_section:list,node_num = None):
-    prs_list = []
-    # for pos in range(node_num):
-    t_pos = 0
-    prs_f = float(struct.unpack("<f", bytes(data_section[t_pos:t_pos + 4]))[0])
-
-    prs_list.append(prs_f)
-
-    prs = {
-        "prs": prs_list,
-    }
-
-    return prs
+    return euler
 
 def _parse_data_packet_0x91(data_section:list,node_num = None):
     pos = 0
@@ -189,6 +170,115 @@ def _parse_data_packet_0x91(data_section:list,node_num = None):
     mag_temp_list = []
     eul_temp_list = []
     quat_temp_list = []
+
+
+    # id
+    id = data_section[pos]
+    id_dic = {
+        "":id
+    }
+
+    id_temp_list.append(id_dic)
+    pos += 1
+    #reserved
+    pos += 6
+    #timestamp
+    timestamp = int(struct.unpack("<I", bytes(data_section[pos:pos + 4]))[0])
+    timestamp_dic = {
+        "(s)":round(timestamp/1000,3)
+    } 
+
+    timestamp_temp_list.append(timestamp_dic)
+    pos += 4
+    #acc
+    acc_X = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    acc_Y = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    acc_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    acc_dic = {
+        "X":round(acc_X,3),
+        "Y":round(acc_Y,3),
+        "Z":round(acc_Z,3)
+    }
+    acc_temp_list.append(acc_dic)
+    #gyr
+    gyr_X = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    gyr_Y = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    gyr_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    gyr_dic = {
+        "X": round(gyr_X,3),
+        "Y": round(gyr_Y,3),
+        "Z": round(gyr_Z,3)
+    }
+    gyr_temp_list.append(gyr_dic)
+    #mag
+    mag_X = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    mag_Y = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    mag_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    mag_dic = {
+        "X": round(mag_X),
+        "Y": round(mag_Y),
+        "Z": round(mag_Z)
+    }
+    mag_temp_list.append(mag_dic)
+    #eul
+    eul_Roll = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    eul_Pitch = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    eul_Yaw = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    eul_dic = {
+        "Roll": round(eul_Roll, 2),
+        "Pitch": round(eul_Pitch, 2),
+        "Yaw": round(eul_Yaw, 2) 
+    }
+    eul_temp_list.append(eul_dic)
+
+    #quat
+    quat_W = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    quat_X = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    quat_Y = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    quat_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
+    pos += 4
+    quat_dic = {
+        "W": round(quat_W,3),
+        "X": round(quat_X,3),
+        "Y": round(quat_Y,3),
+        "Z": round(quat_Z,3),
+    }
+    quat_temp_list.append(quat_dic)
+
+
+    temp_dic_list = {
+        "id":id_temp_list,
+        "timestamp":timestamp_temp_list,
+        "acc":acc_temp_list,
+        "gyr":gyr_temp_list,
+        "mag":mag_temp_list,
+        "euler":eul_temp_list,
+        "quat":quat_temp_list
+    }
+    return temp_dic_list
+
+def _parse_data_packet_0x93(data_section:list,node_num = None):
+    pos = 0
+    id_temp_list = []
+    timestamp_temp_list = []
+    acc_temp_list = []
+    gyr_temp_list = []
+
     # id
     id = data_section[pos]
     id_temp_list.append(id)
@@ -200,12 +290,12 @@ def _parse_data_packet_0x91(data_section:list,node_num = None):
     timestamp_temp_list.append(timestamp)
     pos += 4
     #acc
-    acc_X = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    acc_Y = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    acc_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
+    acc_X = int(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])
+    pos += 2
+    acc_Y = int(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])
+    pos += 2
+    acc_Z = int(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])
+    pos += 2
     acc_dic = {
         "X":acc_X,
         "Y":acc_Y,
@@ -213,70 +303,25 @@ def _parse_data_packet_0x91(data_section:list,node_num = None):
     }
     acc_temp_list.append(acc_dic)
     #gyr
-    gyr_X = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    gyr_Y = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    gyr_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
+    gyr_X = int(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])
+    pos += 2
+    gyr_Y = int(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])
+    pos += 2
+    gyr_Z = int(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])
+    pos += 2
     gyr_dic = {
         "X": gyr_X,
         "Y": gyr_Y,
         "Z": gyr_Z
     }
     gyr_temp_list.append(gyr_dic)
-    #mag
-    mag_X = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    mag_Y = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    mag_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    mag_dic = {
-        "X": mag_X,
-        "Y": mag_Y,
-        "Z": mag_Z
-    }
-    mag_temp_list.append(mag_dic)
-    #eul
-    eul_Roll = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    eul_Pitch = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    eul_Yaw = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    eul_dic = {
-        "Roll": eul_Roll,
-        "Pitch": eul_Pitch,
-        "Yaw": eul_Yaw
-    }
-    eul_temp_list.append(eul_dic)
-    #quat
-    quat_W = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    quat_X = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    quat_Y = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    quat_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
-    pos += 4
-    quat_dic = {
-        "W": quat_W,
-        "X": quat_X,
-        "Y": quat_Y,
-        "Z": quat_Z
-    }
-    quat_temp_list.append(quat_dic)
-
+   
 
     temp_dic = {
         "id":id_temp_list,
         "timestamp":timestamp_temp_list,
         "acc":acc_temp_list,
         "gyr":gyr_temp_list,
-        "mag":mag_temp_list,
-        "eul":eul_temp_list,
-        "quat":quat_temp_list
     }
     return temp_dic
 
@@ -287,6 +332,7 @@ def _parse_data_packet_0x62(data_section:list,node_num = None):
     global module_node_num
     global data_packet_properties
     id_temp_list = []
+    gwid_temp_list = []
     timestamp_temp_list = []
     acc_temp_list = []
     gyr_temp_list = []
@@ -294,7 +340,13 @@ def _parse_data_packet_0x62(data_section:list,node_num = None):
     eul_temp_list = []
     quat_temp_list = []
     pos = 0
+
     gwid = data_section[0]
+    gwid_dic = {
+            "":gwid
+        }
+    gwid_temp_list.append(id_dic)
+
     cnt = data_section[1]
     rel_node_num = cnt
     module_node_num = cnt
@@ -306,16 +358,26 @@ def _parse_data_packet_0x62(data_section:list,node_num = None):
     for node in range(cnt):
         #packet id
         pos += 1
+
+
         # id
         id = data_section[pos]
-        id_temp_list.append(id)
+        id_dic = {
+            "":id
+        }
+        id_temp_list.append(id_dic)
         pos += 1
         #reserved
         pos += 6
         #timestamp
         timestamp = int(struct.unpack("<I", bytes(data_section[pos:pos + 4]))[0])
-        timestamp_temp_list.append(timestamp)
+        timestamp_dic = {
+            "(s)":round(timestamp/1000,3)
+        } 
+
+        timestamp_temp_list.append(timestamp_dic)
         pos += 4
+
         #acc
         acc_X = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
         pos += 4
@@ -324,9 +386,9 @@ def _parse_data_packet_0x62(data_section:list,node_num = None):
         acc_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
         pos += 4
         acc_dic = {
-            "X":acc_X,
-            "Y":acc_Y,
-            "Z":acc_Z
+            "X":round(acc_X,3),
+            "Y":round(acc_Y,3),
+            "Z":round(acc_Z,3)
         }
         acc_temp_list.append(acc_dic)
         #gyr
@@ -337,9 +399,9 @@ def _parse_data_packet_0x62(data_section:list,node_num = None):
         gyr_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
         pos += 4
         gyr_dic = {
-            "X": gyr_X,
-            "Y": gyr_Y,
-            "Z": gyr_Z
+            "X": round(gyr_X,3),
+            "Y": round(gyr_Y,3),
+            "Z": round(gyr_Z,3)
         }
         gyr_temp_list.append(gyr_dic)
         #mag
@@ -350,9 +412,9 @@ def _parse_data_packet_0x62(data_section:list,node_num = None):
         mag_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
         pos += 4
         mag_dic = {
-            "X": mag_X,
-            "Y": mag_Y,
-            "Z": mag_Z
+            "X": round(mag_X),
+            "Y": round(mag_Y),
+            "Z": round(mag_Z)
         }
         mag_temp_list.append(mag_dic)
         #eul
@@ -363,11 +425,12 @@ def _parse_data_packet_0x62(data_section:list,node_num = None):
         eul_Yaw = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
         pos += 4
         eul_dic = {
-            "Roll": eul_Roll,
-            "Pitch": eul_Pitch,
-            "Yaw": eul_Yaw
+            "Roll": round(eul_Roll, 2),
+            "Pitch": round(eul_Pitch, 2),
+            "Yaw": round(eul_Yaw, 2) 
         }
         eul_temp_list.append(eul_dic)
+
         #quat
         quat_W = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
         pos += 4
@@ -378,27 +441,118 @@ def _parse_data_packet_0x62(data_section:list,node_num = None):
         quat_Z = float(struct.unpack("<f", bytes(data_section[pos:pos + 4]))[0])
         pos += 4
         quat_dic = {
-            "W": quat_W,
-            "X": quat_X,
-            "Y": quat_Y,
-            "Z": quat_Z
+            "W": round(quat_W,3),
+            "X": round(quat_X,3),
+            "Y": round(quat_Y,3),
+            "Z": round(quat_Z,3),
         }
         quat_temp_list.append(quat_dic)
 
+
+        temp_dic_list = {
+            "id":id_temp_list,
+            "timestamp":timestamp_temp_list,
+            "acc":acc_temp_list,
+            "gyr":gyr_temp_list,
+            "mag":mag_temp_list,
+            "euler":eul_temp_list,
+            "quat":quat_temp_list
+        }
+
     temp_dic = {
-        "GWD":gwid,
-        "CNT":cnt,
+        "GWD":gwid_temp_list,
         "id":id_temp_list,
         "timestamp":timestamp_temp_list,
         "acc":acc_temp_list,
         "gyr":gyr_temp_list,
         "mag":mag_temp_list,
-        "eul":eul_temp_list,
+        "euler":eul_temp_list,
         "quat":quat_temp_list
     }
     return temp_dic
 
+rel_node_num = 0
+module_node_num = 0
+#only for 400hz acc and gyro
+def _parse_data_packet_0x63(data_section:list,node_num = None):
+    global rel_node_num
+    global module_node_num
+    global data_packet_properties
+    id_temp_list = []
+    timestamp_temp_list = []
+    acc_temp_list = []
+    gyr_temp_list = []
+
+    pos = 0
+    gwid = data_section[0]
+    cnt = data_section[1]
+    rel_node_num = cnt
+    module_node_num = cnt
+    data_packet_properties[0x63]["data_len"] = 5 + (24 * cnt)
+    pos += 2
+    #reserved
+    pos += 5
+    #0x93 packet
+    for node in range(cnt):
+        #packet id
+        pos += 1
+        
+        # id
+        id = data_section[pos]
+        id_dic = {
+            "":id
+        }
+        id_temp_list.append(id_dic)
+        pos += 1
+        #reserved
+        pos += 6
+        #timestamp
+        timestamp = int(struct.unpack("<I", bytes(data_section[pos:pos + 4]))[0])
+        timestamp_dic = {
+            "(s)":round(timestamp/1000,3)
+        } 
+        
+        timestamp_temp_list.append(timestamp_dic)
+        pos += 4
+        
+        #acc
+        acc_X = float(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])/1000
+        pos += 2
+        acc_Y = float(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])/1000
+        pos += 2
+        acc_Z = float(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])/1000
+        pos += 2
+
+        acc_dic = {
+            "X":round(acc_X,3),
+            "Y":round(acc_Y,3),
+            "Z":round(acc_Z,3)
+        }
+        acc_temp_list.append(acc_dic)
+        #gyr
+        gyr_X = float(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])/10
+        pos += 2
+        gyr_Y = float(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])/10
+        pos += 2
+        gyr_Z = float(struct.unpack("<h", bytes(data_section[pos:pos + 2]))[0])/10
+        pos += 2
+        gyr_dic = {
+            "X": round(gyr_X,3),
+            "Y": round(gyr_Y,3),
+            "Z": round(gyr_Z,3)
+        }
+        gyr_temp_list.append(gyr_dic)
+ 
+    temp_dic = {
+        "GWD":gwid_temp_list,
+        "id":id_temp_list,
+        "timestamp":timestamp_temp_list,
+        "acc":acc_temp_list,
+        "gyr":gyr_temp_list,
+    }
+    return temp_dic
 data_packet_properties = {
+    # id
     0x90: {
         "type": "id",
         "id_len": 1,
@@ -406,14 +560,7 @@ data_packet_properties = {
         "parse method": _parse_data_packet_0x90,
         "gw_data":False
     },
-    # quat
-    0xD1: {
-        "type": "quat",
-        "id_len": 1,
-        "data_len": 16,
-        "parse method": _parse_data_packet_0xD1,
-        "gw_data":False
-    },
+    
     # acc
     0xA0: {
         "type": "acc",
@@ -438,21 +585,23 @@ data_packet_properties = {
         "parse method": _parse_data_packet_0xC0,
         "gw_data": False
     },
-    # int_eul
+    # float_eul
     0xD0: {
-        "type": "int_eul",
+        "type": "euler",
         "id_len": 1,
         "data_len": 6,
         "parse method": _parse_data_packet_0xD0,
         "gw_data": False
     },
-    0xF0: {
-        "type": "prs",
+    # quat
+    0xD1: {
+        "type": "quat",
         "id_len": 1,
-        "data_len": 4,
-        "parse method": _parse_data_packet_0xF0,
-        "gw_data": False
+        "data_len": 16,
+        "parse method": _parse_data_packet_0xD1,
+        "gw_data":False
     },
+    # imusol
     0x91: {
         "type": "imusol",
         "id_len": 1,
@@ -460,6 +609,7 @@ data_packet_properties = {
         "parse method": _parse_data_packet_0x91,
         "gw_data": False
     },
+    # gwimusol
     0x62: {
         "type": "gwsol",
         "id_len": 1,
@@ -467,6 +617,24 @@ data_packet_properties = {
         "parse method": _parse_data_packet_0x62,
         "gw_data": True
     },
+
+    # imusol only raw
+    0x93: {
+        "type": "imusol_raw",
+        "id_len": 1,
+        "data_len": 24,
+        "parse method": _parse_data_packet_0x93,
+        "gw_data": False
+    },
+
+    # gwsol only raw
+    0x63: {
+        "type": "gwsol_raw",
+        "id_len": 1,
+        "data_len": 24 * 1,
+        "parse method": _parse_data_packet_0x63,
+        "gw_data": True
+    }
 }
 
 def crc16_update(buffer_list, cal_len, cal_pos, crc=0):
@@ -494,7 +662,7 @@ def sample_rate_timer_cb(sample_timer):
 
     SampleRate = SamplesReceived - prevSamplesReceived
     prevSamplesReceived = SamplesReceived
-    print("每秒帧率：",SampleRate,datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
+    print("每秒幀率：",SampleRate,datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
 
     if sample_rate_alive_flag == True:
         sample_timer = threading.Timer(1.00, sample_rate_timer_cb,args=(sample_timer,))
@@ -504,11 +672,11 @@ def sample_rate_timer_close():
     global sample_rate_alive_flag
     sample_rate_alive_flag = False
 
-# 找到帧头
+# 找到幀頭
 def find_frameheader(buffer_list:list):
-    # 循环查找，直至抛出异常
+    # 循環查找，直至拋出異常
     while True:
-        # 查找帧头的第一个标识符0x5a,若未找到，将会抛出ValueError异常
+        # 查找幀頭的第一個標識符0x5a,若未找到，將會拋出ValueError異常
         try:
             header_ind = buffer_list.index(0x5a)
         except ValueError:
@@ -518,34 +686,34 @@ def find_frameheader(buffer_list:list):
             raise HipnucFrame_NotCompleted_Exception
 
         if buffer_list[header_ind + 1] == 0xa5:
-            # 找到帧头标识符0x5aa5，返回帧头位置
+            # 找到幀頭標識符0x5aa5，返回幀頭位置
             return header_ind
         else:
-            # 未找到帧头标识符，切片继续查找
+            # 未找到幀頭標識符，切片繼續查找
             buffer_list = buffer_list[header_ind + 1:]
 
-# 验证获取长度
+# 驗證獲取長度
 def _get_frame_length(buffer_list, header_pos):
     return int(struct.unpack("<h", bytes(buffer_list[header_pos + 2:header_pos + 4]))[0])
 
 
-# 验证长度是否合法
+# 驗證長度是否合法
 def _verify_frame_length(buffer_list:list, header_pos):
-    # 获取到帧长度
+    # 獲取到幀長度
     frame_len = int(struct.unpack("<h", bytes(buffer_list[header_pos + 2:header_pos + 4]))[0])
-    # 判断帧长度是否合法
-    if frame_len >= 4096:
+    # 判斷幀長度是否合法
+    if frame_len >= 1024:
         raise HipnucFrame_ErrorFrame_Exception
     elif frame_len + header_pos + 6 > len(buffer_list) :
         raise  HipnucFrame_NotCompleted_Exception
 
-# 验证crc是否正确
+# 驗證crc是否正確
 def _verify_frame_crc(buffer_list, header_pos=0):
-    # 获取到帧长度
+    # 獲取到幀長度
     frame_len = int(struct.unpack("<h", bytes(buffer_list[header_pos + 2:header_pos + 2 + 2]))[0])
-    # 获取帧内的crc
+    # 獲取幀內的crc
     f_crc = int(struct.unpack("<H", bytes(buffer_list[header_pos + 4:header_pos + 4 + 2]))[0])
-    # 计算帧的crc
+    # 計算幀的crc
     cal_crc = crc16_update(buffer_list, 4, header_pos, 0)
     cal_crc = crc16_update(buffer_list, frame_len, header_pos + 6, cal_crc)
 
@@ -553,52 +721,37 @@ def _verify_frame_crc(buffer_list, header_pos=0):
         raise HipnucFrame_ErrorFrame_Exception
 
 
-# 截取一条完整且合法的帧，并将帧头帧尾返回
+# 截取一條完整且合法的幀，並將幀頭幀尾返回
 def intercept_one_complete_frame(buffer_list):
-    # 找帧头
+    # 找幀頭
     header_pos = find_frameheader(buffer_list)
     try:
         frame_len = int(struct.unpack("<H", bytes(buffer_list[header_pos + 2:header_pos + 2 + 2]))[0])
     except struct.error:
         raise HipnucFrame_NotCompleted_Exception
     end_pos = header_pos + 5 + frame_len
-    # 验证帧长度
+    # 驗證幀長度
     _verify_frame_length(buffer_list, header_pos)
-    # 验证crc
+    # 驗證crc
     _verify_frame_crc(buffer_list, header_pos)
 
     return header_pos, end_pos
 
-# 从完整帧中获取信息
+# 從完整幀中獲取資訊
 def extraction_information_from_frame(frame_list:list, inf_fifo,report_datatype: dict = None):
-    # 帧率统计
+    # 幀率統計
     global SamplesReceived
     global rel_node_num
     global module_node_num
     SamplesReceived = SamplesReceived + 1
-    # 处理数据帧
+    # 處理數據幀
     data_dic = {}
     pos = 0
 
     data_frame_list = frame_list[6:]
 
-    if data_frame_list[pos] == 0x61:
-        HI221GW_property = data_packet_properties[0X61]["parse method"](data_frame_list[1:])
-        module_node_num = HI221GW_property["CNT"]
-
-        try:
-            if report_datatype[data_packet_properties[0x61]["type"]] == True:
-                data_dic.update(HI221GW_property)
-        #report type default值为False,即未在config文件中配置的默认为False
-        except KeyError:
-            pass
-
-        data_frame_list = data_frame_list[1 + 3:]
-    else:
-        pass
-        # #若无0x61帧，则节点数默认为1
-        # module_node_num = 1
-    #遍历解析数据段内包含的数据
+    
+    #遍歷解析數據段內包含的數據
     while len(data_frame_list) > 0:
         if data_frame_list[0] in data_packet_properties:
 
@@ -622,8 +775,12 @@ def extraction_information_from_frame(frame_list:list, inf_fifo,report_datatype:
 
             if data_frame_list[0] == 0x62:
                 data_len = 76 * rel_node_num + 8
+            elif data_frame_list[0] == 0x63:
+                data_len = 24 * rel_node_num + 8
+
             else:
                 data_len = data_packet_properties[data_frame_list[0]]["data_len"] * rel_node_num
+
 
             data_frame_list = data_frame_list[id_len + data_len:]
         else:
