@@ -13,28 +13,31 @@ extern uint8_t bitmap;
 #define BIT_VALID_MAG  (0x08)
 #define BIT_VALID_EUL  (0x10)
 #define BIT_VALID_QUAT (0x20)
-#define BIT_VALID_ALL  (BIT_VALID_ID | BIT_VALID_ACC | BIT_VALID_GYR | BIT_VALID_MAG | BIT_VALID_EUL | BIT_VALID_QUAT)
+#define BIT_VALID_TIME (0x40)
+#define BIT_VALID_ALL  (BIT_VALID_ID | BIT_VALID_ACC | BIT_VALID_GYR | BIT_VALID_MAG | BIT_VALID_EUL | BIT_VALID_QUAT | BIT_VALID_TIME)
 
-__packed typedef  struct  receive_imusol_packet_t {
-	uint8_t tag;
-	uint8_t id;
-	float acc[3];
-	float gyr[3];
-	float mag[3];
-	float eul[3];
-	float quat[4];
+__packed typedef  struct  id0x91_t {
+        uint8_t     tag;                /* 0x91 */
+        uint8_t     id;
+        uint8_t     rev[6];             /* reserved */
+        uint32_t    ts;                 /* timestamp */
+        float       acc[3];
+        float       gyr[3];
+        float       mag[3];
+        float       eul[3];             /* eular angles:R/P/Y */
+        float       quat[4];            /* quaternion */
 
-} receive_imusol_packet_t;
+} id0x91_t;
 
-__packed typedef  struct  receive_gwsol_packet_t {
+__packed typedef  struct  id0x62_t {
 	uint8_t tag;
 	uint8_t gw_id;
 	uint8_t n;
-	receive_imusol_packet_t receive_imusol[MAX_LENGTH];
-} receive_gwsol_packet_t;
+	id0x91_t id0x91[MAX_LENGTH];
+} id0x62_t;
 	 
-extern receive_imusol_packet_t receive_imusol;
-extern receive_gwsol_packet_t receive_gwsol;
+extern id0x91_t id0x91;
+extern id0x62_t id0x62;
 typedef enum 
 {
     kItemID =                   0x90,   /* user programed ID   */
@@ -50,8 +53,8 @@ typedef enum
 }ItemID_t;
 
 int imu_data_decode_init(void);
-int get_imu_data(receive_imusol_packet_t *data);
-int get_gw_data(receive_gwsol_packet_t *data);
+int get_imu_data(id0x91_t *data);
+int get_gw_data(id0x62_t *data);
 
 #endif
 

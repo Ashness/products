@@ -24,7 +24,7 @@
  官网：http://www.hipnuc.com
 ************************************************/
 
-void dump_data_packet(receive_imusol_packet_t *data);     //打印数据
+void dump_data_packet(id0x91_t *data);     //打印数据
 void SysTick_Handler(void);                               //SysTick中断处理函数
 void SysTick_Init(void);                                  //SysTick初始化函数
 
@@ -47,19 +47,19 @@ int main(void)
         if(usart1_output_flag)
         {
             usart1_output_flag = 0;
-            if(receive_gwsol.tag != KItemGWSOL)
+            if(id0x62.tag != KItemGWSOL)
 			{
 				/* printf imu data packet */
-				dump_data_packet(&receive_imusol);
+				dump_data_packet(&id0x91);
 				putchar(10);
 			}
 			else
 			{
 				/* printf gw data packet */
-				printf("        GW ID:  %-8d\n",receive_gwsol.gw_id);
-				for(i = 0; i < receive_gwsol.n; i++)
+				printf("        GW ID:  %-8d\n",id0x62.gw_id);
+				for(i = 0; i < id0x62.n; i++)
 				{ 
-					dump_data_packet(&receive_gwsol.receive_imusol[i]);
+					dump_data_packet(&id0x62.id0x91[i]);
 					puts("");
 				}
 			}
@@ -101,11 +101,13 @@ void SysTick_Init(void)
 }
 
 /* printf hi229 or hi226 data packet*/
-void dump_data_packet(receive_imusol_packet_t *data)
+void dump_data_packet(id0x91_t *data)
 {
 	if(bitmap & BIT_VALID_ID)
 		printf("    Device ID:  %-8d\r\n",  data->id);
 	printf("   Frame Rate: %4dHz\r\n", frame_rate);
+    if(bitmap & BIT_VALID_TIME)
+        printf(" Run Time(ms):  %d day %d:%d:%d:%d\r\n", data->ts / 86400000, data->ts / 3600000 % 24, data->ts / 60000 % 60, data->ts / 1000 % 60, data->ts / 1000);
 	if(bitmap & BIT_VALID_ACC)
 		printf("       Acc(G):	%8.3f %8.3f %8.3f\r\n",  data->acc[0],  data->acc[1],  data->acc[2]);
 	if(bitmap & BIT_VALID_GYR)
