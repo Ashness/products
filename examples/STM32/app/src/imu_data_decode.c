@@ -97,7 +97,6 @@ static void on_data_received(packet_t *pkt)
                 break;
 				
             case KItemGWSOL:
-                #if 1
                 memcpy((void *)&id0x62, p, 8);
                 offset += 8;
                 for (i = 0; i < id0x62.n; i++)
@@ -106,7 +105,6 @@ static void on_data_received(packet_t *pkt)
                     memcpy((void *)&id0x62.id0x91, p + offset, sizeof(id0x91_t));
                     offset += sizeof(id0x91_t);
                 }
-                #endif
                 break;
 				
             default:
