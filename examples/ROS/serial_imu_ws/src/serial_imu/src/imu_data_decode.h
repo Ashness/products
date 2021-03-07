@@ -12,30 +12,32 @@ extern uint8_t bitmap;
 #define BIT_VALID_MAG    (0x08)
 #define BIT_VALID_EUL    (0x10)
 #define BIT_VALID_QUAT   (0x20)
-#define BIT_VALID_TIMES  (0x40)
-#define BIT_VALID_ALL  (BIT_VALID_QUAT | BIT_VALID_EUL | BIT_VALID_MAG | BIT_VALID_GYR | BIT_VALID_ACC | BIT_VALID_ID | BIT_VALID_TIMES)
+#define BIT_VALID_TIME   (0x40)
+#define BIT_VALID_ALL  (BIT_VALID_QUAT | BIT_VALID_EUL | BIT_VALID_MAG | BIT_VALID_GYR | BIT_VALID_ACC | BIT_VALID_ID | BIT_VALID_TIME)
 
-typedef struct receive_imusol_packet_t {
+typedef struct id0x91_t {
 	uint8_t tag;
 	uint8_t id;
-	uint32_t times;
+	uint8_t rev[6];
+	uint32_t time;
 	float acc[3];
 	float gyr[3];
 	float mag[3]; 
 	float eul[3];
 	float quat[4];
 
-}__attribute__((packed())) receive_imusol_packet_t;
+}__attribute__((packed())) id0x91_t;
 
-typedef struct receive_gwsol_packet_t {
+typedef struct id0x62_t {
 	uint8_t tag;
 	uint8_t gw_id;
 	uint8_t n;
-	receive_imusol_packet_t receive_imusol[MAX_LENGTH];
-}__attribute__((packed())) receive_gwsol_packet_t;
+	uint8_t rev[5];
+	id0x91_t id0x91[MAX_LENGTH];
+}__attribute__((packed())) id0x62_t;
 	 
-extern receive_imusol_packet_t receive_imusol;
-extern receive_gwsol_packet_t receive_gwsol;
+extern id0x91_t id0x91;
+extern id0x62_t id0x62;
 
 typedef enum 
 {

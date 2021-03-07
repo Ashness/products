@@ -31,8 +31,8 @@ int imu_data_decode_init(void);
 typedef void (*on_data_received_event)(packet_t *ptr);
 void packet_decode_init(packet_t *pkt, on_data_received_event rx_handler);
 uint32_t packet_decode(uint8_t);
-void publish_0x91_data(receive_imusol_packet_t *data, serial_imu::Imu_0x91_msg *data_imu);
-void publish_imu_data(receive_imusol_packet_t *data, sensor_msgs::Imu *imu_data);
+void publish_0x91_data(id0x91_t *data, serial_imu::Imu_0x91_msg *data_imu);
+void publish_imu_data(id0x91_t *data, sensor_msgs::Imu *imu_data);
 
 
 #ifdef __cplusplus
@@ -122,12 +122,12 @@ int main(int argc, char** argv)
 				imu_0x91_msg.header.stamp = ros::Time::now();
 				imu_0x91_msg.header.frame_id = "base_0x91_link";
 
-				if(receive_gwsol.tag != KItemGWSOL)
+				if(id0x62.tag != KItemGWSOL)
 				{
-					publish_0x91_data(&receive_imusol, &imu_0x91_msg);
+					publish_0x91_data(&id0x91, &imu_0x91_msg);
 					Imu_0x91_pub.publish(imu_0x91_msg);
 
-					publish_imu_data(&receive_imusol, &imu_data);
+					publish_imu_data(&id0x91, &imu_data);
 					IMU_pub.publish(imu_data);
 				}
 			}
@@ -140,15 +140,15 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-void publish_0x91_data(receive_imusol_packet_t *data, serial_imu::Imu_0x91_msg *data_imu)
+void publish_0x91_data(id0x91_t *data, serial_imu::Imu_0x91_msg *data_imu)
 {
 	data_imu->tag = data->tag;
 	data_imu->bitmap = bitmap;
 	if(bitmap & BIT_VALID_ID)
 		data_imu->id = data->id;
 
-	if(bitmap & BIT_VALID_TIMES)
-		data_imu->times = data->times;
+	if(bitmap & BIT_VALID_TIME)
+		data_imu->time = data->time;
 
 	data_imu->frame_rate = frame_rate;
 
@@ -163,7 +163,7 @@ void publish_0x91_data(receive_imusol_packet_t *data, serial_imu::Imu_0x91_msg *
 	{
 		data_imu->gyr_x = data->gyr[0];
 		data_imu->gyr_y = data->gyr[1];
-		data_imu->gyr_x = data->gyr[2];
+		data_imu->gyr_z = data->gyr[2];
 	}
 
 	if(bitmap & BIT_VALID_MAG)
@@ -189,7 +189,7 @@ void publish_0x91_data(receive_imusol_packet_t *data, serial_imu::Imu_0x91_msg *
 	}
 }
 
-void publish_imu_data(receive_imusol_packet_t *data, sensor_msgs::Imu *imu_data)
+void publish_imu_data(id0x91_t *data, sensor_msgs::Imu *imu_data)
 {	
 	imu_data->orientation.x = data->quat[1];
 	imu_data->orientation.y = data->quat[2];

@@ -77,7 +77,7 @@ find_package(catkin REQUIRED COMPONENTS
 #   std_msgs
 # )
 
-add_message_files(FILES Imu_0x91_msg.msg Imu_0x62_msg.msg)
+add_message_files(FILES Imu_0x91_msg.msg)
 generate_messages(DEPENDENCIES std_msgs)
 
 ################################################

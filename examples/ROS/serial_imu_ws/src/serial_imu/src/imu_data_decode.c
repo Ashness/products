@@ -12,8 +12,8 @@ static packet_t RxPkt; /* used for data receive */
  */
 
 uint8_t bitmap;
-receive_imusol_packet_t receive_imusol;
-receive_gwsol_packet_t receive_gwsol;
+id0x91_t id0x91;  /* HI226 HI229 CH100 CH110 HI221 protocol packet */
+id0x62_t id0x62;  /* HI221 Dongle protocol packet */
 
 static int stream2int16(int *dest,uint8_t *src)
 {
@@ -43,16 +43,16 @@ static void on_data_received(packet_t *pkt)
 		{
 		case kItemID:
 			bitmap |= BIT_VALID_ID;
-			receive_imusol.id = p[1];
+			id0x91.id = p[1];
 			offset += 2;
 			break;
 
 		case kItemAccRaw:
 			bitmap |= BIT_VALID_ACC;
 			stream2int16(temp, p + offset + 1);
-			receive_imusol.acc[0] = (float)temp[0] / 1000;
-			receive_imusol.acc[1] = (float)temp[1] / 1000;
-			receive_imusol.acc[2] = (float)temp[2] / 1000;
+			id0x91.acc[0] = (float)temp[0] / 1000;
+			id0x91.acc[1] = (float)temp[1] / 1000;
+			id0x91.acc[2] = (float)temp[2] / 1000;
 			offset += 7;
 			break;
 
@@ -60,33 +60,33 @@ static void on_data_received(packet_t *pkt)
 		case kItemGyrRaw_yunjing:
 			bitmap |= BIT_VALID_GYR;
 			stream2int16(temp, p + offset + 1);
-			receive_imusol.gyr[0] = (float)temp[0] / 10;
-			receive_imusol.gyr[1] = (float)temp[1] / 10;
-			receive_imusol.gyr[2] = (float)temp[2] / 10;
+			id0x91.gyr[0] = (float)temp[0] / 10;
+			id0x91.gyr[1] = (float)temp[1] / 10;
+			id0x91.gyr[2] = (float)temp[2] / 10;
 			offset += 7;
 			break;
 
 		case kItemMagRaw:
 			bitmap |= BIT_VALID_MAG;
 			stream2int16(temp, p + offset + 1);
-			receive_imusol.mag[0] = (float)temp[0] / 10;
-			receive_imusol.mag[1] = (float)temp[1] / 10;
-			receive_imusol.mag[2] = (float)temp[2] / 10;
+			id0x91.mag[0] = (float)temp[0] / 10;
+			id0x91.mag[1] = (float)temp[1] / 10;
+			id0x91.mag[2] = (float)temp[2] / 10;
 			offset += 7;
 			break;
 
 		case kItemRotationEul:
 			bitmap |= BIT_VALID_EUL;
 			stream2int16(temp, p + offset + 1);
-			receive_imusol.eul[1] = (float)temp[0] / 100;
-			receive_imusol.eul[0] = (float)temp[1] / 100;
-			receive_imusol.eul[2] = (float)temp[2] / 10;
+			id0x91.eul[1] = (float)temp[0] / 100;
+			id0x91.eul[0] = (float)temp[1] / 100;
+			id0x91.eul[2] = (float)temp[2] / 10;
 			offset += 7;
 			break;
 
 		case kItemRotationQuat:
 			bitmap |= BIT_VALID_QUAT;
-			memcpy(receive_imusol.quat, p + offset + 1, sizeof( receive_imusol.quat));
+			memcpy(id0x91.quat, p + offset + 1, sizeof( id0x91.quat));
 			offset += 17;
 			break;
 
@@ -96,26 +96,20 @@ static void on_data_received(packet_t *pkt)
 
 		case KItemIMUSOL:
 			bitmap = BIT_VALID_ALL;
-			receive_imusol.id =p[offset + 1];
-			memcpy(&receive_imusol.times, p + 8, sizeof(int)); 	
-			memcpy(receive_imusol.acc, p + 12, sizeof(float) * 16);
-			offset += 76;
+			memcpy((void *)&id0x91, p, sizeof(id0x91_t));
+			offset += sizeof(id0x91_t);
 			break;
 
 		case KItemGWSOL:
-			receive_gwsol.tag = p[offset];
-			receive_gwsol.gw_id = p[offset + 1]; 
-			receive_gwsol.n = p[offset + 2];
+			memcpy((void *)&id0x62, p, 8);
 			offset += 8;
-			for (int i = 0; i < receive_gwsol.n; i++)
+			for (int i = 0; i < id0x62.n; i++)
 			{
 				bitmap = BIT_VALID_ALL;
-				bitmap &= ~BIT_VALID_TIMES;
-				receive_gwsol.receive_imusol[i].tag = p[offset];
-				receive_gwsol.receive_imusol[i].id = p[offset + 1];
-				memcpy(&receive_gwsol.receive_imusol[i].acc, p + offset + 12 , sizeof(float) * 16);
+				bitmap &= ~BIT_VALID_TIME;
+ 				memcpy((void *)&id0x62.id0x91[i], p + offset, sizeof(id0x91_t));
 
-				offset += 76;
+				offset += sizeof(id0x91_t);
 			}
 			break;
 

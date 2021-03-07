@@ -3,7 +3,7 @@ Header header
 uint8 tag
 uint8 bitmap
 uint8 id
-uint32 times
+uint32 time
 uint32 frame_rate
 float32 acc_x
 float32 acc_y

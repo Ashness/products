@@ -29,8 +29,8 @@ void imu_0x91_callback(const serial_imu::Imu_0x91_msg imu_0x91_msg)
 	if(imu_0x91_msg.bitmap & BIT_VALID_ID)
 		printf("     Devie ID:%6d\n",imu_0x91_msg.id);
 
-	if(imu_0x91_msg.bitmap & BIT_VALID_TIMES)
-		printf("    Run times: %d days  %d:%d:%d:%d\n",imu_0x91_msg.times / 86400000, imu_0x91_msg.times / 3600000 % 24, imu_0x91_msg.times / 60000 % 60, imu_0x91_msg.times / 1000 % 60, imu_0x91_msg.times % 1000);
+	if(imu_0x91_msg.bitmap & BIT_VALID_TIME)
+		printf("    Run times: %d days  %d:%d:%d:%d\n",imu_0x91_msg.time / 86400000, imu_0x91_msg.time / 3600000 % 24, imu_0x91_msg.time / 60000 % 60, imu_0x91_msg.time / 1000 % 60, imu_0x91_msg.time % 1000);
 
 	printf("  Frame Rate:  %4dHz\r\n", imu_0x91_msg.frame_rate);
 	if(imu_0x91_msg.bitmap & BIT_VALID_ACC)
