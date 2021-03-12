@@ -72,19 +72,19 @@ quat(W X Y Z):     0.988    0.129   -0.020    0.081
 4. 在主线程中(while(1)) 中调用打印函数，打印接收到的数据
 
    ```
-               if(receive_gwsol.tag != KItemGWSOL)
+               if(id0x62.tag != KItemGWSOL)
    			{
    				/* printf imu data packet */
-   				dump_data_packet(&receive_imusol);
+   				dump_data_packet(&id0x91);
    				putchar(10);
    			}
    			else
    			{
    				/* printf gw data packet */
-   				printf("        GW ID:  %-8d\n",receive_gwsol.gw_id);
-   				for(i = 0; i < receive_gwsol.n; i++)
+   				printf("        GW ID:  %-8d\n", id0x62.gw_id);
+   				for(i = 0; i < id0x62.n; i++)
    				{ 
-   					dump_data_packet(&receive_gwsol.receive_imusol[i]);
+   					dump_data_packet(&id0x62.id0x91[i]);
    					puts("");
    				}
    			}
