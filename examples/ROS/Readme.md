@@ -68,6 +68,7 @@ $:/opt/ros/kinetic/share/serial
 1. 显示所有的数据信息，便于查看数据。
 2. 打印ROS标准imu_msg 数据
 3. rviz工具实现可视化
+4. 3D显示
 
 ### 	5.1：输出IMU原始数据
 
@@ -131,22 +132,26 @@ linear_acceleration_covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 ### 	5.3：rviz可视化
 
-1. 安装ROS rviz插件
-2. 同上节，使能模块四元数输出
-3. 进入serial_imu_ws，执行`roslaunch imu_launch imu_rviz.launch`命令，执行成功后，rviz工具被打开。
-4. 先点击左下角的Add标签，然后在弹出窗口中，选择 By display type标签，查找rviz_imu_plugin；找到之后，选择它下面的imu标签，点击OK, 这时，我们可以看到rviz的左侧的展示窗口中已经成功添加上了Imu的标签。在FixedFrame中填入**base_link** 。topic中添加 **/IMU_data**。这时，可以看到坐标系随传感器改变而改变。
-5. ​	可以从这里下载rviz的工具,这是ROS官方的一个rviz插件：
+​	1、同上节，使能模块四元数输出
 
-```shell
-git clone -b indigo https://github.com/ccny-ros-pkg/imu_tools.git
-```
+​	2、打开终端，执行`roslaunch imu_launch imu_rviz.launch`命令，执行成功后，rviz工具被打开。
 
-
+​	3、先点击左下角的Add标签，然后在弹出窗口中，选择 By display type标签，查找rviz_imu_plugin；找到之后，选择它下面的imu标签，点击OK, 这时，我们可以看到rviz的左侧的展示窗口中已经成功添加上了Imu的标签。在FixedFrame中填入**base_link** 。topic中添加 **/IMU_data**。这时，可以看到坐标系随传感器改变而改变。
 
 
 
 ![](./img/4.png)
+
+### 5.4：3D显示
+
+​	1、使能模块的四元数输出
+
+​	2、打开终端，执行`roslaunch imu_launch imu_display_3D.launch`命令，执行成功后，会出现3D图形显示
+
+​	
+
 ## 6. FAQ
+
 ​	1.如果是第一次装ROS serial包，有很大的可能会失败，因为本人在装的时候，遇到了这个问题，这里把解决方法提供出来，节约大家的时间。
 
 当在终端执行`sudo apt-get install ros-kinetic-serial`这条命令的时候，有可能会提示你
