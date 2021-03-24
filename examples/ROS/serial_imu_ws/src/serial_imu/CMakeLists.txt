@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -74,7 +75,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs
+#   std_msgos
 # )
 
 add_message_files(FILES Imu_0x91_msg.msg)
@@ -159,6 +160,8 @@ include_directories(
 add_executable(serial_imu src/serial_imu.cpp src/imu_data_decode.c src/packet.c)
 add_definitions(-std=c99)
 target_link_libraries(serial_imu ${catkin_LIBRARIES})
+
+add_dependencies(serial_imu ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(sub_0x91 src/sub_0x91.cpp src/imu_data_decode.c src/packet.c)
 target_link_libraries(sub_0x91 ${catkin_LIBRARIES})
