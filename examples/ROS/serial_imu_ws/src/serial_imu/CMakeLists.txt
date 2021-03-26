@@ -166,11 +166,12 @@ add_dependencies(serial_imu ${PROJECT_NAME}_generate_messages_cpp)
 
 add_executable(sub_0x91 src/sub_0x91.cpp src/imu_data_decode.c src/packet.c)
 target_link_libraries(sub_0x91 ${catkin_LIBRARIES})
-add_dependencies(serial_imu ${PROJECT_NAME}_generate_messages_cpp)
+add_dependencies(sub_0x91 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(sub_0x91 ${project_name}_generate_messages_cpp)
 
 add_executable(sub_spec src/sub_spec.cpp)
 target_link_libraries(sub_spec ${catkin_LIBRARIES})
-add_dependencies(serial_imu ${PROJECT_NAME}_generate_messages_cpp)
+add_dependencies(sub_spec ${PROJECT_NAME}_generate_messages_cpp)
 
 #############
 ## Install ##
