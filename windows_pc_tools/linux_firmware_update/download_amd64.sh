@@ -13,7 +13,7 @@ echo 0D | xxd -r -ps > $tty
 echo 5A A6 | xxd -r -ps > $tty
 
 
-./blhost-linux-armv7l -p $tty,115200 get-property 1
-./blhost-linux-armv7l -p $tty,115200 flash-erase-region 0x8000 0x18000
-./blhost-linux-armv7l -p $tty,115200 write-memory 0x8000 $file
-./blhost-linux-armv7l -p $tty,115200 reset
+./linux/amd64/blhost -p $tty,115200 get-property 1
+./linux/amd64/blhost -p $tty,115200 flash-erase-region 0x8000 0x18000
+./linux/amd64/blhost -p $tty,115200 write-memory 0x8000 $file
+./linux/amd64/blhost -p $tty,115200 reset
