@@ -1,4 +1,4 @@
-file=atf413_hi229_b0_32k.hex
+file=atf413_hi229_b0_32k.bin
 tty=/dev/ttyUSB0
 
 
