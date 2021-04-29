@@ -1,0 +1,3 @@
+Uranus_1.2.4.9_cn： 老版本上位机，老客户请使用
+CHCenter_win: 新版本上位机，推荐新客户使用
+linux_cli_update: linux下命令行固件升级程序，一般用不到
