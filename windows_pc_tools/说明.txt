@@ -1,2 +1,0 @@
-CHCenter_win: windows上位机
-linux_cli_update: linux下命令行固件升级程序，一般用不到
