@@ -28,5 +28,7 @@
 
 > * 网站：www.hipnuc.com
 
+欢迎关注超核电子:
 
+![](img/qrcode_for_gh_1d8b6b51409d_258.jpg)
 
