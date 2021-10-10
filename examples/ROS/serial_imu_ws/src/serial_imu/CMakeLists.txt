@@ -78,7 +78,8 @@ find_package(catkin REQUIRED COMPONENTS
 #   std_msgos
 # )
 
-add_message_files(FILES Imu_0x91_msg.msg)
+add_message_files(FILES Imu_0x91_msg.msg Imu_0x62_msg.msg Imu_data_package.msg)
+
 generate_messages(DEPENDENCIES std_msgs)
 
 ################################################
@@ -157,8 +158,9 @@ include_directories(
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+
+
 add_executable(serial_imu src/serial_imu.cpp src/imu_data_decode.c src/packet.c)
-add_definitions(-std=c99)
 target_link_libraries(serial_imu ${catkin_LIBRARIES})
 
 add_dependencies(serial_imu ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -168,6 +170,12 @@ add_executable(sub_0x91 src/sub_0x91.cpp src/imu_data_decode.c src/packet.c)
 target_link_libraries(sub_0x91 ${catkin_LIBRARIES})
 add_dependencies(sub_0x91 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(sub_0x91 ${project_name}_generate_messages_cpp)
+
+
+add_executable(sub_0x62 src/sub_0x62.cpp src/imu_data_decode.c src/packet.c)
+target_link_libraries(sub_0x62 ${catkin_LIBRARIES})
+add_dependencies(sub_0x62 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(sub_0x62 ${project_name}_generate_messages_cpp)
 
 add_executable(sub_spec src/sub_spec.cpp)
 target_link_libraries(sub_spec ${catkin_LIBRARIES})

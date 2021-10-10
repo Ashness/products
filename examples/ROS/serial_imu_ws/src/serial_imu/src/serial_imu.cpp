@@ -10,6 +10,8 @@
 #include <pthread.h>
 #include <sensor_msgs/Imu.h>
 #include <serial_imu/Imu_0x91_msg.h>
+#include <serial_imu/Imu_0x62_msg.h>
+#include <serial_imu/Imu_data_package.h>
 #include <signal.h>
 
 #ifdef __cplusplus 
@@ -33,6 +35,7 @@ void packet_decode_init(packet_t *pkt, on_data_received_event rx_handler);
 uint32_t packet_decode(uint8_t);
 void publish_0x91_data(id0x91_t *data, serial_imu::Imu_0x91_msg *data_imu);
 void publish_imu_data(id0x91_t *data, sensor_msgs::Imu *imu_data);
+void publish_0x62_data(id0x62_t *data, serial_imu::Imu_0x62_msg *data_imu);
 
 
 #ifdef __cplusplus
@@ -60,6 +63,7 @@ int main(int argc, char** argv)
 
 	ros::Publisher IMU_pub = n.advertise<sensor_msgs::Imu>("/IMU_data", 20);
 	ros::Publisher Imu_0x91_pub = n.advertise<serial_imu::Imu_0x91_msg>("/imu_0x91_package", 10);
+	ros::Publisher Imu_0x62_pub = n.advertise<serial_imu::Imu_0x62_msg>("/imu_0x62_package", 10);
 
 	serial::Serial sp;
 
@@ -99,6 +103,7 @@ int main(int argc, char** argv)
 	ros::Rate loop_rate(500);
 	sensor_msgs::Imu imu_data;
 	serial_imu::Imu_0x91_msg imu_0x91_msg;
+	serial_imu::Imu_0x62_msg imu_0x62_msg;
 
 	while(ros::ok())
 	{
@@ -115,20 +120,36 @@ int main(int argc, char** argv)
 			{
 				for(int i = 0; i < num; i++)
 					packet_decode(buffer[i]);
-
-				imu_data.header.stamp = ros::Time::now();
-				imu_data.header.frame_id = "base_link";
-
-				imu_0x91_msg.header.stamp = ros::Time::now();
-				imu_0x91_msg.header.frame_id = "base_0x91_link";
-
-				if(id0x62.tag != KItemGWSOL)
+				
+				if (bitmap & 0xff)
 				{
-					publish_0x91_data(&id0x91, &imu_0x91_msg);
-					Imu_0x91_pub.publish(imu_0x91_msg);
 
-					publish_imu_data(&id0x91, &imu_data);
-					IMU_pub.publish(imu_data);
+					imu_data.header.stamp = ros::Time::now();
+					imu_data.header.frame_id = "base_link";
+
+					imu_0x91_msg.header.stamp = ros::Time::now();
+					imu_0x91_msg.header.frame_id = "base_0x91_link";
+
+					imu_0x62_msg.header.stamp = ros::Time::now();
+					imu_0x62_msg.header.frame_id = "base_0x62_link";
+
+					if(id0x62.tag != KItemGWSOL)
+					{
+						publish_0x91_data(&id0x91, &imu_0x91_msg);
+						Imu_0x91_pub.publish(imu_0x91_msg);
+
+						publish_imu_data(&id0x91, &imu_data);
+						IMU_pub.publish(imu_data);
+					}
+					else
+					{
+						 
+						publish_0x62_data(&id0x62, &imu_0x62_msg);
+						
+						Imu_0x62_pub.publish(imu_0x62_msg);
+
+						 
+					}
 				}
 			}
 		}
@@ -140,7 +161,9 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-void publish_0x91_data(id0x91_t *data, serial_imu::Imu_0x91_msg *data_imu)
+
+//void publish_0x91_data(id0x91_t *data, serial_imu::Imu_0x91_msg *data_imu)
+void memcpy_imu_data_package(id0x91_t *data, serial_imu::Imu_data_package *data_imu)
 {
 	data_imu->tag = data->tag;
 	data_imu->bitmap = bitmap;
@@ -152,6 +175,7 @@ void publish_0x91_data(id0x91_t *data, serial_imu::Imu_0x91_msg *data_imu)
 
 	data_imu->frame_rate = frame_rate;
 
+	//data_imu->frame_rate = crc_error_count;
 	if(bitmap & BIT_VALID_ACC)
 	{
 		data_imu->acc_x = data->acc[0];
@@ -201,4 +225,22 @@ void publish_imu_data(id0x91_t *data, sensor_msgs::Imu *imu_data)
 	imu_data->linear_acceleration.x = data->acc[0] * GRA_ACC;
 	imu_data->linear_acceleration.y = data->acc[1] * GRA_ACC;
 	imu_data->linear_acceleration.z = data->acc[2] * GRA_ACC;
+}
+
+void publish_0x91_data(id0x91_t *data, serial_imu::Imu_0x91_msg *data_imu)
+{
+	memcpy_imu_data_package(data,&(data_imu->imu_data));
+}
+
+void publish_0x62_data(id0x62_t *data, serial_imu::Imu_0x62_msg *data_imu)
+{
+	/*  */
+	data_imu->tag = data->tag;
+	data_imu->gw_id = data->gw_id;
+	data_imu->node_num = data->n;
+
+	for (int i = 0; i < data_imu->node_num; i++)
+		memcpy_imu_data_package(&(data->id0x91[i]), &(data_imu->node_data[i]));
+		
+	
 }

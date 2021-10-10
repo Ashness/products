@@ -16,6 +16,8 @@
 #define CH_ERR  (1)
 #endif
 
+uint32_t crc_error_count;
+
 uint32_t frame_count;
 
 static void crc16_update(uint16_t *currect_crc, const uint8_t *src, uint32_t len)
@@ -161,6 +163,9 @@ uint32_t packet_decode(uint8_t c)
 					frame_count++;
                     event_handler(RxPkt);
                 }
+				else
+					crc_error_count++;
+
                 status = kStatus_Idle;
             }
             break;
