@@ -11,7 +11,7 @@ static packet_t RxPkt; /* used for data receive */
  **在复制数据时，在用户程序中直接调用一个memcpy函数
  */
 
-uint8_t bitmap;
+uint16_t bitmap;
 id0x91_t id0x91;  /* HI226 HI229 CH100 CH110 HI221 protocol packet */
 id0x62_t id0x62;  /* HI221 Dongle protocol packet */
 
@@ -118,6 +118,8 @@ static void on_data_received(packet_t *pkt)
 			offset++;	
 		}
 	}
+	if(offset >= pkt->payload_len)
+		bitmap |= BIT_VALID_END;
 }
 
 

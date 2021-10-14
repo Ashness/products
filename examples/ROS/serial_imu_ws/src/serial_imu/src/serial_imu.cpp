@@ -121,9 +121,9 @@ int main(int argc, char** argv)
 				for(int i = 0; i < num; i++)
 					packet_decode(buffer[i]);
 				
-				if (bitmap & 0xff)
+				if (bitmap & 0x100)
 				{
-
+					bitmap &= 0xfeff;
 					imu_data.header.stamp = ros::Time::now();
 					imu_data.header.frame_id = "base_link";
 
