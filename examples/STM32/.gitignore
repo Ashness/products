@@ -1,6 +1,8 @@
 Project/**/MDK/Flash
 Project/**/MDK/Listing
 Project/**/MDK/Objects
+DebugConfig
+
 # Object files
 *.o
 *.ko
