@@ -7,9 +7,6 @@
 /* dump logs */
 //#define  CH_DEBUG
 
-
-
-
 #define MAXRAWLEN       (512)       /* max raw frame long */
 #define MAX_NODE_SIZE   (16)        /* max support node count */
 

@@ -23,17 +23,13 @@
  ¹ÙÍø£ºhttp://www.hipnuc.com
 ************************************************/
 
-
-void SysTick_Handler(void); 
-void SysTick_Init(void); 
-
 static raw_t raw;                                         /* IMU stram read/control struct */
 static uint8_t decode_succ;                               /* 0: no new frame arrived, 1: new frame arrived */
 
 static void dump_imu_data(raw_t *raw)
 {
     int i;
-    if(raw->item_code[0] != KItemGWSOL) /* HI222(HI221GW) */
+    if(raw->item_code[0] != KItemGWSOL) /* HI226 HI229 CH100 CH110 */  
     {
         printf("%-16s%d\r\n",       "id:",  raw->imu[0].id);
         printf("%-16s%.3f %.3f %.3f\r\n",       "acc(G):",        raw->imu[0].acc[0], raw->imu[0].acc[1],  raw->imu[0].acc[2]);
@@ -43,7 +39,6 @@ static void dump_imu_data(raw_t *raw)
         printf("%-16s%.3f %.3f %.3f %.3f\r\n",  "quat:",          raw->imu[0].quat[0], raw->imu[0].quat[1],  raw->imu[0].quat[2], raw->imu[0].quat[3]);
         printf("%-16s%.3f\r\n",       "presure(pa):",  raw->imu[0].pressure);
         printf("%-16s%d\r\n",       "timestamp(ms):",  raw->imu[0].timestamp);
-        
         printf("item: ");
         for(i=0; i<raw->nitem_code; i++)
         {
@@ -51,11 +46,13 @@ static void dump_imu_data(raw_t *raw)
         }
         printf("\r\n");
     }
-    else /* HI226 HI229 CH100 CH110 */
+    else /* HI222(HI221GW) */
     {
+        putchar(10);
         printf("gateway: %s%d, %s%d\r\n",       "gwid:",      raw->gwid, "node cnt:", raw->nimu);
         for(i=0; i<raw->nimu; i++)
         {
+            putchar(10);
             printf("%-16s%d\r\n",       "id:",  raw->imu[i].id);
             printf("%-16s%.3f %.3f %.3f\r\n",       "acc(G):",        raw->imu[i].acc[0], raw->imu[i].acc[1],  raw->imu[i].acc[2]);
             printf("%-16s%.3f %.3f %.3f\r\n",       "gyr(deg/s):",    raw->imu[i].gyr[0], raw->imu[i].gyr[1],  raw->imu[i].gyr[2]);
@@ -80,6 +77,7 @@ int main(void)
         if(decode_succ)
         {
             decode_succ = 0;
+            delay_ms(800);
             dump_imu_data(&raw);
         }
 	}	 
@@ -96,13 +94,3 @@ void USART2_IRQHandler(void)
     /* decode each byte */
     decode_succ = ch_serial_input(&raw, ch);
 } 
-
-/* SysTick initialization */
-void SysTick_Init(void)
-{
-    SysTick->LOAD = (float)SystemCoreClock / 40;             
-    SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk;
-    SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk; 
-}
-
-

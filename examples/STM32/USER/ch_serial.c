@@ -1,7 +1,5 @@
 #include "ch_serial.h"
 
-
-
 #if defined(CH_DEBUG)
 #include <stdio.h>
 #define CH_TRACE	printf
@@ -14,8 +12,6 @@
 #define CHSYNC2         (0xA5)        /* CHAOHE message sync code 2 */
 #define CH_HDR_SIZE     (0x06)        /* CHAOHE protocol header size */
 
-
-
 /* common type conversion */
 #define U1(p) (*((uint8_t *)(p)))
 #define I1(p) (*((int8_t  *)(p)))
@@ -23,8 +19,6 @@
 static uint16_t U2(uint8_t *p) {uint16_t u; memcpy(&u,p,2); return u;}
 static uint32_t U4(uint8_t *p) {uint32_t u; memcpy(&u,p,4); return u;}
 static float    R4(uint8_t *p) {float    r; memcpy(&r,p,4); return r;}
-
-
 
 static void crc16_update(uint16_t *currect_crc, const uint8_t *src, uint32_t len)
 {
@@ -180,7 +174,6 @@ static int parse_data(raw_t *raw)
                 break;
 				
             case KItemGWSOL:
-
                 raw->item_code[raw->nitem_code++] = KItemGWSOL;
                 raw->gwid = U1(p+ofs+1);
                 raw->nimu = U1(p+ofs+2);
@@ -251,7 +244,6 @@ int ch_serial_input(raw_t *raw, uint8_t data)
         raw->nbyte = 2;
         return 0;
     }
-    
 
     raw->buf[raw->nbyte++] = data;
     
@@ -265,7 +257,7 @@ int ch_serial_input(raw_t *raw, uint8_t data)
         }
     }
     
-    if (raw->nbyte < CH_HDR_SIZE || raw->nbyte < (raw->len+CH_HDR_SIZE)) 
+    if (raw->nbyte < (raw->len + CH_HDR_SIZE)) 
     {
         return 0;
     }
@@ -274,6 +266,3 @@ int ch_serial_input(raw_t *raw, uint8_t data)
     
     return decode_ch(raw);
 }
-
-    
-
