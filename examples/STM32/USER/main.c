@@ -23,7 +23,7 @@
  ¹ÙÍø£ºhttp://www.hipnuc.com
 ************************************************/
 
-static raw_t raw;                                         /* IMU stram read/control struct */
+static raw_t raw = {0};                                         /* IMU stram read/control struct */
 static uint8_t decode_succ;                               /* 0: no new frame arrived, 1: new frame arrived */
 
 static void dump_imu_data(raw_t *raw)
