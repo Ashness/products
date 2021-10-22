@@ -23,8 +23,43 @@
  ¹ÙÍø£ºhttp://www.hipnuc.com
 ************************************************/
 
+#define ARRAY_SIZE(x)	(sizeof(x) / sizeof((x)[0]))
+
 static raw_t raw = {0};                                         /* IMU stram read/control struct */
 static uint8_t decode_succ;                               /* 0: no new frame arrived, 1: new frame arrived */
+
+typedef struct
+{
+    uint8_t code;
+    char    name[8];
+}item_code_name_t;
+
+const item_code_name_t item_code_name[] = 
+{
+    {0x90, "id"},
+    {0xA0, "acc"},
+    {0xB0, "gyr"},
+    {0xC0, "mag"},
+    {0xD0, "eul"},
+    {0xD1, "quat"},
+    {0xF0, "pressure"},
+    {0x91, "IMUSOL"},   /* collection of acc,gyr,mag,eul etc. to replace A0,B0,C0,D0... see user manual*/
+    {0x60, "GWSOL"},    /* HI221 node imu data collection  see user manual */
+};
+
+static const char *code2name(uint8_t code)
+{
+    const char *p = NULL;
+    int i;
+    for(i=0; i<ARRAY_SIZE(item_code_name); i++)
+    {
+        if(code == item_code_name[i].code)
+        {
+            p = item_code_name[i].name;
+        }
+    }
+    return p;
+}
 
 static void dump_imu_data(raw_t *raw)
 {
@@ -42,7 +77,7 @@ static void dump_imu_data(raw_t *raw)
         printf("item: ");
         for(i=0; i<raw->nitem_code; i++)
         {
-            printf("0x%02X ", raw->item_code[i]);
+            printf("0x%02X(%s)", raw->item_code[i], code2name(raw->item_code[i]));
         }
         printf("\r\n");
     }
