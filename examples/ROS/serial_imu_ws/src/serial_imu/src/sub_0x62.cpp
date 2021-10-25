@@ -4,7 +4,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <serial_imu/Imu_0x62_msg.h>
-#include "imu_data_decode.h"
+
 
 void imu_0x62_callback(const serial_imu::Imu_0x62_msg imu_0x62_msg);
 
@@ -36,71 +36,57 @@ void imu_0x62_callback(const serial_imu::Imu_0x62_msg imu_0x62_msg)
 		goto ONE_NODE;	
 	}
 
-	for (i = 0; i < imu_0x62_msg.node_num; i += 2)
+	for (i = 0; i < imu_0x62_msg.node_num - (imu_0x62_msg.node_num % 2); i += 2)
 	{
 		putchar(10);
-#if 0
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_ID)
-			printf("     Devie ID:%6d\n",imu_0x62_msg.node_data[i].id);
+#if 1 
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_PRS)
-			printf("     Prs(hPa): %6f\n", imu_0x62_msg.node_data[i].prs);
+		printf("#     Devie ID:%6d					#    Device ID:%6d					#\r\n", imu_0x62_msg.node_data[i].id, imu_0x62_msg.node_data[i + 1].id);
 
+		printf("#     Prs(hPa): %6f				#     Prs(hPa): %6f				#\r\n", imu_0x62_msg.node_data[i].prs, imu_0x62_msg.node_data[i + 1].prs);
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_TIME)
-			printf("    Run times: %d days  %d:%d:%d:%d\n",imu_0x62_msg.node_data[i].time / 86400000, imu_0x62_msg.node_data[i].time / 3600000 % 24, imu_0x62_msg.node_data[i].time / 60000 % 60, imu_0x62_msg.node_data[i].time / 1000 % 60, imu_0x62_msg.node_data[i].time % 1000);
+		printf("#     Run time: %d days  %d:%d:%d:%d				#     Run time: %d days %d:%d:%d:%d				#\r\n",imu_0x62_msg.node_data[i].time / 86400000, imu_0x62_msg.node_data[i].time / 3600000 % 24, imu_0x62_msg.node_data[i].time / 60000 % 60, imu_0x62_msg.node_data[i].time / 1000 % 60, imu_0x62_msg.node_data[i].time % 1000,
+				                                                                                          imu_0x62_msg.node_data[i + 1].time / 86400000, imu_0x62_msg.node_data[i + 1].time / 3600000 % 24, imu_0x62_msg.node_data[i + 1].time / 60000 % 60, imu_0x62_msg.node_data[i + 1].time / 1000 % 60, imu_0x62_msg.node_data[i + 1].time % 1000);
 
-		printf("   Frame Rate:  %4dHz\r\n", imu_0x62_msg.node_data[i].frame_rate);
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_ACC)
-			printf("       Acc(G):%8.3f %8.3f %8.3f\r\n", imu_0x62_msg.node_data[i].acc_x, imu_0x62_msg.node_data[i].acc_y, imu_0x62_msg.node_data[i].acc_z);
+		printf("#   Frame Rate:  %4dHz					#   Frame Rate:  %4d					#\r\n", imu_0x62_msg.node_data[i].frame_rate, imu_0x62_msg.node_data[i + 1].frame_rate);
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_GYR)
-			printf("   Gyr(deg/s):%8.2f %8.2f %8.2f\r\n", imu_0x62_msg.node_data[i].gyr_x, imu_0x62_msg.node_data[i].gyr_y, imu_0x62_msg.node_data[i].gyr_z);
+		printf("#       Acc(G):%8.3f %8.3f %8.3f		#       Acc(G):%8.3f %8.3f %8.3f		#\r\n", imu_0x62_msg.node_data[i].acc_x, imu_0x62_msg.node_data[i].acc_y, imu_0x62_msg.node_data[i].acc_z, imu_0x62_msg.node_data[i + 1].acc_x, imu_0x62_msg.node_data[i + 1].acc_y, imu_0x62_msg.node_data[i + 1].acc_z);
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_MAG) 
-			printf("      Mag(uT):%8.2f %8.2f %8.2f\r\n", imu_0x62_msg.node_data[i].mag_x, imu_0x62_msg.node_data[i].mag_y, imu_0x62_msg.node_data[i].mag_z);
+		printf("#   Gyr(deg/s):%8.2f %8.2f %8.2f		#   Gyr(deg/s):%8.2f %8.2f %8.2f		#\r\n", imu_0x62_msg.node_data[i].gyr_x, imu_0x62_msg.node_data[i].gyr_y, imu_0x62_msg.node_data[i].gyr_z, imu_0x62_msg.node_data[i + 1].gyr_x, imu_0x62_msg.node_data[i + 1].gyr_y, imu_0x62_msg.node_data[i + 1].gyr_z);
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_EUL)
-			printf("   Eul(R P Y):%8.2f %8.2f %8.2f\r\n", imu_0x62_msg.node_data[i].eul_r, imu_0x62_msg.node_data[i].eul_p, imu_0x62_msg.node_data[i].eul_y);
+		printf("#      Mag(uT):%8.2f %8.2f %8.2f		#      Mag(uT):%8.2f %8.2f %8.2f		#\r\n", imu_0x62_msg.node_data[i].mag_x, imu_0x62_msg.node_data[i].mag_y, imu_0x62_msg.node_data[i].mag_z, imu_0x62_msg.node_data[i + 1].mag_x, imu_0x62_msg.node_data[i + 1].mag_y, imu_0x62_msg.node_data[i + 1].mag_z);
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_QUAT)
-			printf("Quat(W X Y Z):%8.3f %8.3f %8.3f %8.3f\r\n", imu_0x62_msg.node_data[i].quat_w, imu_0x62_msg.node_data[i].quat_x, imu_0x62_msg.node_data[i].quat_y, imu_0x62_msg.node_data[i].quat_z);
+		printf("#   Eul(R P Y):%8.2f %8.2f %8.2f		#   Eul(R P Y):%8.2f %8.2f %8.2f		#\r\n", imu_0x62_msg.node_data[i].eul_r, imu_0x62_msg.node_data[i].eul_p, imu_0x62_msg.node_data[i].eul_y, imu_0x62_msg.node_data[i + 1].eul_r, imu_0x62_msg.node_data[i + 1].eul_p, imu_0x62_msg.node_data[i + 1].eul_y);
+
+		printf("#Quat(W X Y Z):%8.3f %8.3f %8.3f %8.3f	#Quat(W X Y Z):%8.3f %8.3f %8.3f %8.3f	#\r\n", imu_0x62_msg.node_data[i].quat_w, imu_0x62_msg.node_data[i].quat_x, imu_0x62_msg.node_data[i].quat_y, imu_0x62_msg.node_data[i].quat_z, imu_0x62_msg.node_data[i + 1].quat_w, imu_0x62_msg.node_data[i + 1].quat_x, imu_0x62_msg.node_data[i + 1].quat_y, imu_0x62_msg.node_data[i + 1].quat_z);
 #endif
 	}
 
 ONE_NODE:
-	if(i - 1 == imu_0x62_msg.node_num)
+	if(i - 1 == imu_0x62_msg.node_num || i + 1 == imu_0x62_msg.node_num)
 	{
 		putchar(10);
-		i -= 2;
-#if 1 
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_ID)
-			printf("     Devie ID:%6d\n",imu_0x62_msg.node_data[i].id);
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_PRS)
-			printf("     Prs(hPa): %6f\n", imu_0x62_msg.node_data[i].prs);
+		if(imu_0x62_msg.node_num == 1)
+			i -= 2;
 
+		printf("#     Devie ID:%6d					#\n",imu_0x62_msg.node_data[i ].id);
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_TIME)
-			printf("    Run times: %d days  %d:%d:%d:%d\n",imu_0x62_msg.node_data[i].time / 86400000, imu_0x62_msg.node_data[i].time / 3600000 % 24, imu_0x62_msg.node_data[i].time / 60000 % 60, imu_0x62_msg.node_data[i].time / 1000 % 60, imu_0x62_msg.node_data[i].time % 1000);
+		printf("#     Prs(hPa): %6f				#\n", imu_0x62_msg.node_data[i].prs);
 
-		printf("   Frame Rate:  %4dHz\r\n", imu_0x62_msg.node_data[i].frame_rate);
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_ACC)
-			printf("       Acc(G):%8.3f %8.3f %8.3f\r\n", imu_0x62_msg.node_data[i].acc_x, imu_0x62_msg.node_data[i].acc_y, imu_0x62_msg.node_data[i].acc_z);
+		printf("#    Run times: %d days  %d:%d:%d:%d				#\n",imu_0x62_msg.node_data[i].time / 86400000, imu_0x62_msg.node_data[i].time / 3600000 % 24, imu_0x62_msg.node_data[i].time / 60000 % 60, imu_0x62_msg.node_data[i].time / 1000 % 60, imu_0x62_msg.node_data[i].time % 1000);
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_GYR)
-			printf("   Gyr(deg/s):%8.2f %8.2f %8.2f\r\n", imu_0x62_msg.node_data[i].gyr_x, imu_0x62_msg.node_data[i].gyr_y, imu_0x62_msg.node_data[i].gyr_z);
+		printf("#   Frame Rate:  %4dHz					#\r\n", imu_0x62_msg.node_data[i].frame_rate);
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_MAG) 
-			printf("      Mag(uT):%8.2f %8.2f %8.2f\r\n", imu_0x62_msg.node_data[i].mag_x, imu_0x62_msg.node_data[i].mag_y, imu_0x62_msg.node_data[i].mag_z);
+		printf("#       Acc(G):%8.3f %8.3f %8.3f		#\r\n", imu_0x62_msg.node_data[i].acc_x, imu_0x62_msg.node_data[i].acc_y, imu_0x62_msg.node_data[i].acc_z);
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_EUL)
-			printf("   Eul(R P Y):%8.2f %8.2f %8.2f\r\n", imu_0x62_msg.node_data[i].eul_r, imu_0x62_msg.node_data[i].eul_p, imu_0x62_msg.node_data[i].eul_y);
+		printf("#   Gyr(deg/s):%8.2f %8.2f %8.2f		#\r\n", imu_0x62_msg.node_data[i].gyr_x, imu_0x62_msg.node_data[i].gyr_y, imu_0x62_msg.node_data[i].gyr_z);
 
-		if(imu_0x62_msg.node_data[i].bitmap & BIT_VALID_QUAT)
-			printf("Quat(W X Y Z):%8.3f %8.3f %8.3f %8.3f\r\n", imu_0x62_msg.node_data[i].quat_w, imu_0x62_msg.node_data[i].quat_x, imu_0x62_msg.node_data[i].quat_y, imu_0x62_msg.node_data[i].quat_z);
+		printf("#      Mag(uT):%8.2f %8.2f %8.2f		#\r\n", imu_0x62_msg.node_data[i].mag_x, imu_0x62_msg.node_data[i].mag_y, imu_0x62_msg.node_data[i].mag_z);
 
-#endif
+		printf("#   Eul(R P Y):%8.2f %8.2f %8.2f		#\r\n", imu_0x62_msg.node_data[i].eul_r, imu_0x62_msg.node_data[i].eul_p, imu_0x62_msg.node_data[i].eul_y);
+
+		printf("#Quat(W X Y Z):%8.3f %8.3f %8.3f %8.3f	#\r\n", imu_0x62_msg.node_data[i].quat_w, imu_0x62_msg.node_data[i].quat_x, imu_0x62_msg.node_data[i].quat_y, imu_0x62_msg.node_data[i].quat_z);
 	}
 
 }

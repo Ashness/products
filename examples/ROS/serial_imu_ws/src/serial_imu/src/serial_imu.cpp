@@ -20,29 +20,27 @@ extern "C"{
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "packet.h"
-#include "imu_data_decode.h"
+
+#include "ch_serial.h"
 
 #define IMU_SERIAL   "/dev/ttyUSB0"
-#define BAUD         (115200)
+#define BAUD         (921600)
 #define GRA_ACC      (9.8)
 #define DEG_TO_RAD   (0.01745329)
 #define BUF_SIZE     1024
 
-int imu_data_decode_init(void);
-typedef void (*on_data_received_event)(packet_t *ptr);
-void packet_decode_init(packet_t *pkt, on_data_received_event rx_handler);
-uint32_t packet_decode(uint8_t);
-void publish_0x91_data(id0x91_t *data, serial_imu::Imu_0x91_msg *data_imu);
-void publish_imu_data(id0x91_t *data, sensor_msgs::Imu *imu_data);
-void publish_0x62_data(id0x62_t *data, serial_imu::Imu_0x62_msg *data_imu);
-
+void publish_0x91_data(raw_t *data, serial_imu::Imu_0x91_msg *data_imu);
+void publish_imu_data(raw_t *data, sensor_msgs::Imu *imu_data);
+void publish_0x62_data(raw_t *data, serial_imu::Imu_0x62_msg *data_imu);
 
 #ifdef __cplusplus
 }
 #endif
 
+static raw_t raw;
+
 static int frame_rate;
+static int frame_count;
 
 static uint8_t buf[2048];
 
@@ -58,6 +56,7 @@ void timer(int sig)
 
 int main(int argc, char** argv)
 {
+	int rev = 0;
 	ros::init(argc, argv, "serial_imu");
 	ros::NodeHandle n;
 
@@ -75,8 +74,6 @@ int main(int argc, char** argv)
 
 	sp.setTimeout(to);
 	
-	
-	imu_data_decode_init();
 	signal(SIGALRM,timer);
 
 	try
@@ -118,37 +115,42 @@ int main(int argc, char** argv)
 			num = sp.read(buffer, num);
 			if(num > 0)
 			{
-				for(int i = 0; i < num; i++)
-					packet_decode(buffer[i]);
-				
-				if (bitmap & 0x100)
+				imu_data.header.stamp = ros::Time::now();
+				imu_data.header.frame_id = "base_link";
+
+				imu_0x91_msg.header.stamp = ros::Time::now(); 
+				imu_0x91_msg.header.frame_id = "base_0x91_link";
+
+				imu_0x62_msg.header.stamp = ros::Time::now();
+				imu_0x62_msg.header.frame_id = "base_0x62_link";
+
+				for (int i = 0; i < num; i++)
 				{
-					bitmap &= 0xfeff;
-					imu_data.header.stamp = ros::Time::now();
-					imu_data.header.frame_id = "base_link";
-
-					imu_0x91_msg.header.stamp = ros::Time::now();
-					imu_0x91_msg.header.frame_id = "base_0x91_link";
-
-					imu_0x62_msg.header.stamp = ros::Time::now();
-					imu_0x62_msg.header.frame_id = "base_0x62_link";
-
-					if(id0x62.tag != KItemGWSOL)
+					rev = ch_serial_input(&raw, buffer[i]);
+				
+					if(raw.item_code[raw.nitem_code - 1] != KItemGWSOL)
 					{
-						publish_0x91_data(&id0x91, &imu_0x91_msg);
-						Imu_0x91_pub.publish(imu_0x91_msg);
+						if(rev)
+						{
+							frame_count++;
 
-						publish_imu_data(&id0x91, &imu_data);
-						IMU_pub.publish(imu_data);
+							publish_0x91_data(&raw, &imu_0x91_msg);
+							Imu_0x91_pub.publish(imu_0x91_msg);
+
+							publish_imu_data(&raw, &imu_data);
+							IMU_pub.publish(imu_data);
+
+						}
 					}
 					else
 					{
-						 
-						publish_0x62_data(&id0x62, &imu_0x62_msg);
-						
-						Imu_0x62_pub.publish(imu_0x62_msg);
+						if(rev)
+						{
+							frame_count++;
 
-						 
+							Imu_0x62_pub.publish(imu_0x62_msg);
+							publish_0x62_data(&raw, &imu_0x62_msg);
+						}
 					}
 				}
 			}
@@ -161,86 +163,72 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-
-//void publish_0x91_data(id0x91_t *data, serial_imu::Imu_0x91_msg *data_imu)
-void memcpy_imu_data_package(id0x91_t *data, serial_imu::Imu_data_package *data_imu)
+void imu_data_package(raw_t *data, serial_imu::Imu_data_package *data_imu, int num)
 {
-	data_imu->tag = data->tag;
-	data_imu->bitmap = bitmap;
-	if(bitmap & BIT_VALID_ID)
-		data_imu->id = data->id;
-
-	if(bitmap & BIT_VALID_TIME)
-		data_imu->time = data->time;
+	data_imu->tag = data->item_code[num];
 
 	data_imu->frame_rate = frame_rate;
 
-	//data_imu->frame_rate = crc_error_count;
-	if(bitmap & BIT_VALID_ACC)
-	{
-		data_imu->acc_x = data->acc[0];
-		data_imu->acc_y = data->acc[1];
-		data_imu->acc_z = data->acc[2];
-	}
+	data_imu->id = data->imu[num].id;
 
-	if(bitmap & BIT_VALID_GYR)
-	{
-		data_imu->gyr_x = data->gyr[0];
-		data_imu->gyr_y = data->gyr[1];
-		data_imu->gyr_z = data->gyr[2];
-	}
+	data_imu->time = data->imu[num].timestamp;
 
-	if(bitmap & BIT_VALID_MAG)
-	{
-		data_imu->mag_x = data->mag[0];
-		data_imu->mag_y = data->mag[1];
-		data_imu->mag_z = data->mag[2];
-	}
+	data_imu->prs = data->imu[num].pressure;
 
-	if(bitmap & BIT_VALID_EUL)
-	{
-		data_imu->eul_r = data->eul[0];
-		data_imu->eul_p = data->eul[1];
-		data_imu->eul_y = data->eul[2];
-	}
+	data_imu->acc_x = data->imu[num].acc[0];
+	data_imu->acc_y = data->imu[num].acc[1];
+	data_imu->acc_z = data->imu[num].acc[2];
 
-	if(bitmap & BIT_VALID_QUAT)
-	{
-		data_imu->quat_w = data->quat[0];
-		data_imu->quat_x = data->quat[1];
-		data_imu->quat_y = data->quat[2];
-		data_imu->quat_z = data->quat[3];
-	}
+	data_imu->gyr_x = data->imu[num].gyr[0];
+	data_imu->gyr_y = data->imu[num].gyr[1];
+	data_imu->gyr_z = data->imu[num].gyr[2];
+
+	data_imu->mag_x = data->imu[num].mag[0];
+	data_imu->mag_y = data->imu[num].mag[1];
+	data_imu->mag_z = data->imu[num].mag[2];
+
+	data_imu->eul_r = data->imu[num].eul[0];
+	data_imu->eul_p = data->imu[num].eul[1];
+	data_imu->eul_y = data->imu[num].eul[2];
+
+	data_imu->quat_w = data->imu[num].quat[0];
+	data_imu->quat_x = data->imu[num].quat[1];
+	data_imu->quat_y = data->imu[num].quat[2];
+	data_imu->quat_z = data->imu[num].quat[3];
 }
 
-void publish_imu_data(id0x91_t *data, sensor_msgs::Imu *imu_data)
+void publish_0x91_data(raw_t *data, serial_imu::Imu_0x91_msg *data_imu)
+{
+	imu_data_package(data, &(data_imu->imu_data),data->nimu - 1);
+}
+
+
+void publish_imu_data(raw_t *data, sensor_msgs::Imu *imu_data)
 {	
-	imu_data->orientation.x = data->quat[1];
-	imu_data->orientation.y = data->quat[2];
-	imu_data->orientation.z = data->quat[3];
-	imu_data->orientation.w = data->quat[0];
-	imu_data->angular_velocity.x = data->gyr[0] * DEG_TO_RAD;
-	imu_data->angular_velocity.y = data->gyr[1] * DEG_TO_RAD;
-	imu_data->angular_velocity.z = data->gyr[2] * DEG_TO_RAD;
-	imu_data->linear_acceleration.x = data->acc[0] * GRA_ACC;
-	imu_data->linear_acceleration.y = data->acc[1] * GRA_ACC;
-	imu_data->linear_acceleration.z = data->acc[2] * GRA_ACC;
+	imu_data->orientation.x = data->imu[data->nimu - 1].quat[1];
+	imu_data->orientation.y = data->imu[data->nimu - 1].quat[2];
+	imu_data->orientation.z = data->imu[data->nimu - 1].quat[3];
+	imu_data->orientation.w = data->imu[data->nimu - 1].quat[0];
+	imu_data->angular_velocity.x = data->imu[data->nimu - 1].gyr[0] * DEG_TO_RAD;
+	imu_data->angular_velocity.y = data->imu[data->nimu - 1].gyr[1] * DEG_TO_RAD;
+	imu_data->angular_velocity.z = data->imu[data->nimu - 1].gyr[2] * DEG_TO_RAD;
+	imu_data->linear_acceleration.x = data->imu[data->nimu - 1].acc[0] * GRA_ACC;
+	imu_data->linear_acceleration.y = data->imu[data->nimu - 1].acc[1] * GRA_ACC;
+	imu_data->linear_acceleration.z = data->imu[data->nimu - 1].acc[2] * GRA_ACC;
 }
 
-void publish_0x91_data(id0x91_t *data, serial_imu::Imu_0x91_msg *data_imu)
-{
-	memcpy_imu_data_package(data,&(data_imu->imu_data));
-}
 
-void publish_0x62_data(id0x62_t *data, serial_imu::Imu_0x62_msg *data_imu)
+void publish_0x62_data(raw_t *data, serial_imu::Imu_0x62_msg *data_imu)
 {
+#if 1
 	/*  */
-	data_imu->tag = data->tag;
-	data_imu->gw_id = data->gw_id;
-	data_imu->node_num = data->n;
+	data_imu->tag = data->item_code[data->nitem_code];
+	data_imu->gw_id = data->gwid;
+	data_imu->node_num = data->nimu;
 
 	for (int i = 0; i < data_imu->node_num; i++)
-		memcpy_imu_data_package(&(data->id0x91[i]), &(data_imu->node_data[i]));
-		
+		imu_data_package(data, &(data_imu->node_data[i]), i);
+#endif		
 	
 }
+
