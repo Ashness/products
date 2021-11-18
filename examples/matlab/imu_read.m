@@ -4,6 +4,30 @@ clc;
 close all;
 format short;
 
+global CH_HDR_SIZE;
+global MAXRAWLEN;
+
+CH_HDR_SIZE = 6;                    % 帧头大小
+MAXRAWLEN = 512;                % 最大buff size
+
+
+imu_tempate.id = 0;                     % user defined ID
+imu_tempate.acc = [0 0 0];          % acceleration
+imu_tempate.gyr = [0 0 0];          %  angular velocity
+imu_tempate.mag = [0 0 0];        % magnetic field
+imu_tempate.eul = [0 0 0];          % attitude: eular angle
+imu_tempate.quat = [0 0 0 0];    % attitude: quaternion
+imu_tempate.pressure = 0;     	  %  air pressure
+imu_tempate.timestamp = 0;
+
+
+global raw;
+raw.nbyte = 0;                            %   /* number of bytes in message buffer */
+raw.len = 0;                                % /* message length (bytes) */
+raw.imu= imu_tempate;             %   /* imu data list, if (HI226/HI229/CH100/CH110, use imu[0]) */
+raw.buf = [0 0];
+
+
 %% 默认配置
 DEFALUT_BAUD = 115200;
 PORT = 'COM4';
@@ -34,139 +58,148 @@ s = serialport(PORT, DEFALUT_BAUD); %创建串口
 while true
     if  s.NumBytesAvailable > 0
         data = read(s, s.NumBytesAvailable,"uint8"); %读取还串口数据
-        [imu_data, new_data_rdy] = parse_fame(data); %解析串口数据
-        if new_data_rdy == 1
-            fprintf("加速度:%.3f %.3f %.3f\n", imu_data.acc);
-            fprintf("角速度:%.3f %.3f %.3f\n", imu_data.gyr);
-            fprintf("欧拉角: Roll:%.2f Pitch:%.2f Yaw:%.2f\n", imu_data.roll, imu_data.pitch, imu_data.yaw);
+        
+        for ii = 1: length(data)
+            
+            [new_data_rdy]  =  ch_serial_input(data(ii));
+            if new_data_rdy == 1
+                fprintf("加速度:%.3f %.3f %.3f\n", raw.imu.acc);
+                fprintf("角速度:%.3f %.3f %.3f\n",  raw.imu.gyr);
+                fprintf("欧拉角: Roll:%.2f Pitch:%.2f Yaw:%.2f\n", raw.imu.eul(1), raw.imu.eul(2), raw.imu.eul(3));
+                new_data_rdy = 0;
+            end
         end
+        pause(0.01);
     end
-    
-    pause(0.02);
 end
 
 
-% 解析帧中数据域
-function imu_data = parse_data(data)
 
+% 同步帧头， 1:同步  0：未同步
+function ret = sync_ch(data)
+global raw;
+raw.buf(1) = raw.buf(2);
+raw.buf(2) = data;
+if (raw.buf(1) == 0x5A && raw.buf(2) == 0xA5);  ret = 1; else; ret = 0; end
+end
+
+
+function new_data_rdy = decode_ch()
+global raw;
+new_data_rdy = 0;
+
+crc1 = raw.buf(5) + raw.buf(6)*256;
+crc_text = raw.buf;
+crc_text(5:6) = [];
+
+%计算CRC 校验成功后调用解析数据函数
+crc2 = crc16(double(crc_text));
+
+if crc1 == crc2
+    parse_data();
+    new_data_rdy = 1;
+else
+    fprintf("CRC err\n");
+end
+
+end
+
+function  [new_data_rdy] = ch_serial_input(data)
+
+global raw;
+global CH_HDR_SIZE;
+global MAXRAWLEN;
+
+new_data_rdy = 0;
+
+if (raw.nbyte == 0)
+    if(sync_ch(data) == 0);  return;      end
+    
+    raw.nbyte = 3;
+    return;
+end
+
+raw.buf(raw.nbyte) = data;
+raw.nbyte = raw.nbyte + 1;
+
+if (raw.nbyte == CH_HDR_SIZE)
+    raw.len = raw.buf(3) + raw.buf(4)*256;
+    if(raw.len > (MAXRAWLEN - CH_HDR_SIZE));   fprintf("ch length error: len=%d\n",raw.len); raw.nbyte = 0;  return; end
+end
+
+if raw.nbyte < (raw.len + CH_HDR_SIZE+1);    return; end;
+raw.nbyte  = 0;
+new_data_rdy = decode_ch();
+
+end
+
+% 解析帧中数据域
+function parse_data()
+global raw;
+
+data = raw.buf;
+data(1:6) = [];
 len = length(data); %数据域长度
+
 
 offset = 1;
 while offset < len
     byte = data(offset);
     switch byte
         case 0x90 % ID标签
-            imu_data.id = data(offset+1);
+            raw.imu.id = data(offset+1);
             offset = offset + 2;
         case 0xA0 %加速度
             tmp = typecast(uint8(data(offset+1:offset+6)), 'int16');
-            imu_data.acc = double(tmp) / 1000;
+            raw.imu.acc = double(tmp) / 1000;
             offset = offset + 7;
         case 0xB0 %角速度
             tmp = typecast(uint8(data(offset+1:offset+6)), 'int16');
-            imu_data.gyr = double(tmp) / 10;
+            raw.imu.gyr = double(tmp) / 10;
             offset = offset + 7;
         case 0xC0 %地磁
             tmp = typecast(uint8(data(offset+1:offset+6)), 'int16');
-            imu_data.mag = double(tmp) / 10;
+            raw.imu.mag = double(tmp) / 10;
             offset = offset + 7;
         case 0xD0 %欧拉角
             tmp = typecast(uint8(data(offset+1:offset+6)), 'int16');
-            imu_data.pitch = double(tmp(1)) / 100;
-            imu_data.roll = double(tmp(2)) / 100;
-            imu_data.yaw = double(tmp(3)) / 10;
+            raw.imu.eul(1) = double(tmp(1)) / 100;
+            raw.imu.eul(2) = double(tmp(2)) / 100;
+            raw.imu.eul(3) = double(tmp(3)) / 10;
             offset = offset + 7;
         case 0xF0 % 气压
             offset = offset + 5;
         case 0x91 % 0x91数据包
-            imu_data.id = data(offset+1);
-            imu_data.acc =double(typecast(uint8(data(offset+12:offset+23)), 'single'));
-            imu_data.gyr =double(typecast(uint8(data(offset+24:offset+35)), 'single'));
-            imu_data.mag =double(typecast(uint8(data(offset+36:offset+47)), 'single'));
-            imu_data.roll = double(typecast(uint8(data(offset+48:offset+51)), 'single'));
-            imu_data.pitch = double(typecast(uint8(data(offset+52:offset+55)), 'single'));
-            imu_data.yaw = double(typecast(uint8(data(offset+56:offset+59)), 'single'));
-            imu_data.quat = double(typecast(uint8(data(offset+60:offset+75)), 'single'));
+            raw.imu.id = data(offset+1);
+            raw.imu.acc = double(typecast(uint8(data(offset+12:offset+23)), 'single'));
+            raw.imu.gyr = double(typecast(uint8(data(offset+24:offset+35)), 'single'));
+            raw.imu.mag = double(typecast(uint8(data(offset+36:offset+47)), 'single'));
+            raw.imu.eul = double(typecast(uint8(data(offset+48:offset+59)), 'single'));
+            raw.imu.quat = double(typecast(uint8(data(offset+60:offset+75)), 'single'));
             offset = offset + 76;
         otherwise
-            % offset = offset + 1;
+            offset = offset + 1;
     end
 end
 
 end
 
 
-
-% 拆包一帧，并校验CRC
-function [imu_data, new_data_rdy] = parse_fame(data)
-imu_data = 0;
-new_data_rdy = 0; %数据接受成功标准，成功接收1帧:new_data_rdy=1, else: new_data_rdy=0
-
-persistent current_state; %状态机
-if isempty(current_state)
-    current_state=0;
-end
-
-persistent frame_len;   % 帧中数据域长度
-persistent frame_dat;  %一帧数据内容
-persistent frame_dat_cnt; %帧中数据域计数器
-
-len = length(data);
-if len > 0
-    %data = read(src,src.NumBytesAvailable,"uint8");
-    len = length(data);
-    
-    for i = 1:len
-        byte = data(i);
-        switch(current_state)
-            case 0 %帧头 0x5A
-                if(byte == 0x5A)
-                    frame_dat_cnt = 1;
-                    current_state = 1;
-                end
-            case 1 %帧头0xA5
-                if(byte == 0xA5)
-                    current_state = 2;
-                end
-            case 2 %长度低字节
-                frame_len = byte;
-                current_state = 3;
-            case 3 %长度高字节
-                frame_len = frame_len + byte*256;  % 长度字段
-                current_state = 4;
-            case 4 % CRC字段低
-                current_state = 5;
-            case 5 % CRC字段高
-                current_state = 6;
-            case 6 % 帧中数据段
-                if(frame_dat_cnt >= frame_len+6)
-                    crc1 = frame_dat(5) + frame_dat(6)*256;
-                    
-                    % 去除CRC校验字段
-                    crc_text = frame_dat;
-                    crc_text(5:6) = [];
-                    
-                    %计算CRC 校验成功后调用解析数据函数
-                    crc2 = crc16(double(crc_text));
-                    if crc1 == crc2
-                        imu_data = parse_data(frame_dat(7:end));
-                        new_data_rdy = 1;
-                    end
-                    current_state = 0;
-                end
-        end
-        frame_dat(frame_dat_cnt) = byte;
-        frame_dat_cnt = frame_dat_cnt+1;
-    end
-end
-
-end
 
 
 % data = "5A A5 4C 00 6C 51 91 00 A0 3B 01 A8 02 97 BD BB 04 00 9C A0 65 3E A2 26 45 3F 5C E7 30 3F E2 D4 5A C2 E5 9D A0 C1 EB 23 EE C2 78 77 99 41 AB AA D1 C1 AB 2A 0A C2 8D E1 42 42 8F 1D A8 C1 1E 0C 36 C2 E6 E5 5A 3F C1 94 9E 3E B8 C0 9E BE BE DF 8D BE";
 % data = sscanf(data,'%2x');
-% parse_fame(data);
-
-
-
+%
+%
+% for ii = 1: length(data)
+%
+%     [new_data_rdy]  =  ch_serial_input(data(ii));
+%     if new_data_rdy == 1
+%         fprintf("加速度:%.3f %.3f %.3f\n", raw.imu.acc);
+%           fprintf("角速度:%.3f %.3f %.3f\n",  raw.imu.gyr);
+%         fprintf("欧拉角: Roll:%.2f Pitch:%.2f Yaw:%.2f\n", raw.imu.eul(1), raw.imu.eul(2), raw.imu.eul(3));
+%         new_data_rdy = 0;
+%
+%     end
+% end
 
