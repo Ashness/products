@@ -23,9 +23,11 @@ Ubuntu 系统自带CP210x的驱动，默认不需要安装串口驱动。将调�
 **ttyUSB0** 文件就是调试版在ubuntu系统中生成的设备(后面的数字是不固定的，有可能为 ttyUSB1  或 ttyUSB2)
 
 5. 打开USB设备的可执行权限：
+
 ```shell
    $ sudo chmod 777 /dev/ttyUSB0
 ```
+
 ## 2. 编译serial_imu_ws工作空间
 
 1. 打开终端进入/examples/ROS2/serial_imu_ws 目录
@@ -45,6 +47,7 @@ linux@ubuntu20:~/serial_imu_ws$
 1. 在Ubuntu环境中，支持的波特率为115200, 460800, 921600。本例程使用的默认波特率是115200，默认打开的串口名称是/dev/ttyUSB0。	
 
 2. 如果您需要更高的输出频率，请修改serial_port.cpp文件中的宏定义，改为其他波特率。	
+
 ```c
 #define IMU_SERIAL  ("/dev/ttyUSB0")
 #define BAUD        (B115200)
@@ -62,7 +65,7 @@ linux@ubuntu20:~/serial_imu_ws$
 1. 在windows系统下进行配置模块，使能四元数输出。
 2. 使用Window下 CHCenter上位机进行配置：先把模块连接到PC机上。然后使用CHCenter工具进行 连接对应的com口，点击 __工具__  --->  __配置模块__，在弹出的新窗口中，点击__ATCMD__，然后在输入框中输入AT指令：`AT+SETPTL=0x91`，点击发送，接收区最后显示 __ok__ ，说明配置成功，断电重启模块。执行`ros2 launch serial_imu imu_spec_msg.launch.py`命令。执行成功后，就可以看到ROS定义的IMU话题消息：
 
-```txt
+```c
 [listener-2] ---
 [listener-2] header:
 [listener-2] 	stamp:
