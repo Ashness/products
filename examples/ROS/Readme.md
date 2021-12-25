@@ -18,14 +18,16 @@ Ubuntu 系统自带CP210x的驱动，默认不需要安装串口驱动。将调�
 2. 查看是否已经存在  ttyUSBx 这个设备文件，便于确认对应的端口号。x表示USB设备号，由于Ubuntu USB设备号为从零开始依次累加，所以多个设备每次开机后设备号是不固定的，需要确定设备的设备号。
 4. 接下来插入USB线，连接调试板，然后再次执行`ls /dev`。 dev目录下多了一个设备, 如图：
 
-![](https://raw.githubusercontent.com/hipnuc/products/master/examples/ROS/img/2.png)
+<img src="https://raw.githubusercontent.com/hipnuc/products/master/examples/ROS/img/2.png">
 
 **ttyUSB0** 文件就是调试版在ubuntu系统中生成的设备(后面的数字是不固定的，有可能为 ttyUSB1  或 ttyUSB2)
 
 5. 打开USB设备的可执行权限：
+
 ```shell
    $ sudo chmod 777 /dev/ttyUSB0
 ```
+
 ## 2. 安装ROS serial软件包
 
 本例程依赖ROS提供的serial包实现串口通信.
@@ -54,7 +56,8 @@ $:/opt/ros/kinetic/share/serial
 
 1. 在Ubuntu环境中，支持的波特率为115200, 460800, 921600。本例程使用的默认波特率是115200，默认打开的串口名称是/dev/ttyUSB0。	
 
-2. 如果您需要更高的输出频率，请编辑serial_imu.cpp文件，修改serial_imu.cpp文件中的宏定义，改为其他波特率。	
+2. 如果您需要更高的输出频率，请编辑serial_imu.cpp文件，修改serial_imu.cpp文件中的宏定义，改为其他波特率。
+
 ```c
 #define IMU_SERIAL ("/dev/ttyUSB0")
 #define BAUD       (115200)
@@ -77,6 +80,7 @@ $:/opt/ros/kinetic/share/serial
 ```shell
 $ roslaunch imu_launch imu_msg.launch imu_package:=0x91
 ```
+
 2. 如果执行失败，提示找不到相应的launch文件，则需要配置环境，在当前终端执行：
 
 ```shell
@@ -104,6 +108,7 @@ Quat(W X Y Z):   0.770    0.066   -0.611   -0.172
 
 1. 在windows系统下进行配置模块，使能四元数输出。
 2. 使用Window下 CHCenter上位机进行配置：先把模块连接到PC机上。然后使用CHCenter工具进行 连接对应的com口，点击 __工具__  --->  __配置模块__，在弹出的新窗口中，点击__ATCMD__，然后在输入框中输入AT指令：`AT+SETPTL=0x91`，点击发送，接收区最后显示 __ok__ ，说明配置成功，断电重启模块。执行`roslaunch imu_launch imu_msg.launch`命令。执行成功后，就可以看到ROS定义的IMU话题消息：
+
 ```txt
 header: 
   seq: 595
@@ -140,7 +145,7 @@ linear_acceleration_covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 
 
-![](https://raw.githubusercontent.com/hipnuc/products/master/examples/ROS/img/4.png)
+<img src="https://raw.githubusercontent.com/hipnuc/products/master/examples/ROS/img/4.png">
 
 ### 5.4：3D显示
 
@@ -156,7 +161,7 @@ linear_acceleration_covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 当在终端执行`sudo apt-get install ros-kinetic-serial`这条命令的时候，有可能会提示你
 
-![](https://raw.githubusercontent.com/hipnuc/products/master/examples/ROS/img/5.png)
+<img src="https://raw.githubusercontent.com/hipnuc/products/master/examples/ROS/img/5.png">
 
 为了提供素材，serial故意输错的。
 
@@ -275,7 +280,7 @@ linux@ubuntu：~$ sudo vi defined_serial.rules
 
 然后在这个文件中输入如下内容：
 
-![](img/6.png)
+<img src="img/6.png">
 
 格式如下：
 
