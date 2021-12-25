@@ -18,7 +18,7 @@ Ubuntu 系统自带CP210x的驱动，默认不需要安装串口驱动。将调�
 2. 查看是否已经存在  ttyUSBx 这个设备文件，便于确认对应的端口号。x表示USB设备号，由于Ubuntu USB设备号为从零开始依次累加，所以多个设备每次开机后设备号是不固定的，需要确定设备的设备号。
 4. 接下来插入USB线，连接调试板，然后再次执行`ls /dev`。 dev目录下多了一个设备, 如图：
 
-![](https://github.com/hipnuc/products/blob/master/examples/ROS/img/2.png)
+![](https://raw.githubusercontent.com/hipnuc/products/master/examples/ROS/img/2.png)
 
 **ttyUSB0** 文件就是调试版在ubuntu系统中生成的设备(后面的数字是不固定的，有可能为 ttyUSB1  或 ttyUSB2)
 
@@ -140,7 +140,7 @@ linear_acceleration_covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 
 
-![](https://github.com/hipnuc/products/blob/master/examples/ROS/img/4.png)
+![](https://raw.githubusercontent.com/hipnuc/products/master/examples/ROS/img/4.png)
 
 ### 5.4：3D显示
 
@@ -156,7 +156,7 @@ linear_acceleration_covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 当在终端执行`sudo apt-get install ros-kinetic-serial`这条命令的时候，有可能会提示你
 
-![](https://github.com/hipnuc/products/blob/master/examples/ROS/img/5.png)
+![](https://raw.githubusercontent.com/hipnuc/products/master/examples/ROS/img/5.png)
 
 为了提供素材，serial故意输错的。
 
