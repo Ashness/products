@@ -18,7 +18,7 @@ Ubuntu 系统自带CP210x的驱动，默认不需要安装串口驱动。将调�
 2. 查看是否已经存在  ttyUSBx 这个设备文件，便于确认对应的端口号。x表示USB设备号，由于Ubuntu USB设备号为从零开始依次累加，所以多个设备每次开机后设备号是不固定的，需要确定设备的设备号。
 4. 接下来插入USB线，连接调试板，然后再次执行`ls /dev`。 dev目录下多了一个设备, 如图：
 
-![](./img/2.png)
+<img src="https://raw.githubusercontent.com/hipnuc/products/master/examples/ROS2/img/2.png">
 
 **ttyUSB0** 文件就是调试版在ubuntu系统中生成的设备(后面的数字是不固定的，有可能为 ttyUSB1  或 ttyUSB2)
 
@@ -61,6 +61,7 @@ linux@ubuntu20:~/serial_imu_ws$
 
 1. 在windows系统下进行配置模块，使能四元数输出。
 2. 使用Window下 CHCenter上位机进行配置：先把模块连接到PC机上。然后使用CHCenter工具进行 连接对应的com口，点击 __工具__  --->  __配置模块__，在弹出的新窗口中，点击__ATCMD__，然后在输入框中输入AT指令：`AT+SETPTL=0x91`，点击发送，接收区最后显示 __ok__ ，说明配置成功，断电重启模块。执行`ros2 launch serial_imu imu_spec_msg.launch.py`命令。执行成功后，就可以看到ROS定义的IMU话题消息：
+
 ```txt
 [listener-2] ---
 [listener-2] header:
@@ -85,8 +86,6 @@ linux@ubuntu20:~/serial_imu_ws$
 [listener-2] 	z: 5.013053989410400924
 [listener-2] linear_acceleration_covariance: [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 [listener-2] ---
-
-
 ```
 
 ​	3、另开一个终端窗口，执行`ros2 topic hz /Imu_data`，可以查看话题发布的频率。
@@ -174,7 +173,6 @@ linux@ubuntu:~$ udevadm info --attribute-walk --name=/dev/ttyUSB1
     ATTRS{removable}=="unknown"
     ATTRS{serial}=="9c1d818b48aeeb119d082897637728c5"
 ......(信息太多了，就不全部放出来了，大家可以自己去看看详细的信息,这里只放出本次需要关心的信息)
-
 ```
 
 最后是ttyUSB2的详细信息：
@@ -210,7 +208,7 @@ linux@ubuntu：~$ sudo vi defined_serial.rules
 
 然后在这个文件中输入如下内容：
 
-![](img/6.png)
+![](img/6.png">
 
 格式如下：
 
