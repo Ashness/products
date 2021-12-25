@@ -280,7 +280,7 @@ linux@ubuntu：~$ sudo vi defined_serial.rules
 
 然后在这个文件中输入如下内容：
 
-<img src="img/6.png">
+<img src="https://raw.githubusercontent.com/hipnuc/products/master/examples/ROS/img/6.png">
 
 格式如下：
 
