@@ -1,0 +1,329 @@
+(ExpressProject "HI-219MDK"
+  (ProjectVersion "19981106")
+  (ProjectType "PCB")
+  (Folder "Design Resources"
+    (Folder "Library"
+      (File "..\cadence_library\olb\component.olb"
+        (Type "Schematic Library"))
+      (File "..\cadence_library\olb\ic.olb"
+        (Type "Schematic Library"))
+      (File "..\cadence_library\olb\connector.olb"
+        (Type "Schematic Library")))
+    (NoModify)
+    (File ".\hi2xxdk.dsn"
+      (Type "Schematic Design"))
+    (BuildFileAddedOrDeleted "x")
+    (CompileFileAddedOrDeleted "x")
+    (DRC_Scope "0")
+    (DRC_Action "0")
+    (DRC_Create_Warnings "FALSE")
+    (DRC_View_Output "FALSE")
+    (DRC_Preserved_Waived "FALSE")
+    (DRC_Run_Electrical_Rules "TRUE")
+    (DRC_Run_Physical_Rules "FALSE")
+    (DRC_Report_File "E:\超核科技设计相关\HI-219MDK\HI-219MDK.DRC")
+    (DRC_Check_Ports "FALSE")
+    (DRC_Check_Off-Page_Connectors "FALSE")
+    (DRC_Report_Ports_and_Off-page_Connectors "FALSE")
+    (DRC_SDT_Compatibility "FALSE")
+    (DRC_Report_Off-grid_Objects "FALSE")
+    (DRC_Check_Unconnected_Nets "TRUE")
+    (DRC_Check_for_Misleading_TAP "FALSE")
+    (DRC_Report_Netnames "FALSE")
+    (DRC_Check_Single_Node_Nets "TRUE")
+    (DRC_Run_Electrical_Custom_DRC "FALSE")
+    (DRC_Check_No_Driving_Source "TRUE")
+    (DRC_Check_Duplicate_NetNames "TRUE")
+    (DRC_Check_Floating_Pins "TRUE")
+    (DRC_Check_Physical_Power_Pins_Visibility "TRUE")
+    (DRC_Check_PCB_Footprint_Property "TRUE")
+    (DRC_Check_Normal_Convert_View_Sync "TRUE")
+    (DRC_Check_Incorrect_PinGroup_Assignment "TRUE")
+    (DRC_Check_High_Speed_Props_Syntax "TRUE")
+    (DRC_Check_Missing_Pin_Numbers "TRUE")
+    (DRC_Check_Device_With_No_Pins "TRUE")
+    (DRC_Check_Power_Ground_Short "TRUE")
+    (DRC_Identical_References "TRUE")
+    (DRC_Type_Mismatch "TRUE")
+    (DRC_Visible_Power_pins "FALSE")
+    (DRC_Report_Unused_Part_Packages "TRUE")
+    (DRC_Check_Name_Prop_For_HierBlocks "TRUE")
+    (DRC_Run_Physical_Custom_DRC "FALSE")
+    ("Create Allegro Netlist" "TRUE")
+    ("Allegro Netlist Directory" "allegro")
+    ("View Allegro Netlist Files" "FALSE")
+    ("Allegro Netlist Create DCF File" "FALSE")
+    ("Update Allegro Board" "FALSE")
+    ("Allegro Netlist Output Board File" "allegro\HI-219MDK.brd")
+    ("Allegro Netlist Remove Etch" "FALSE")
+    ("Allegro Netlist Place Changed Component" "ALWAYS_REPLACE")
+    ("Allegro Netlist Open Board in Allegro" "ALLEGRO")
+    ("Allegro Setup Backup Versions" "3")
+    ("Allegro Setup Output Warnings" "TRUE")
+    ("Allegro Setup Ignore Constraints" "FALSE")
+    ("Allegro Setup Part Type Length" "31")
+    ("Allegro Netlist Combine Property String" "PCB Footprint")
+    ("Allegro Netlist Ignore Fixed Property" "FALSE")
+    ("Allegro Netlist User Defined Property" "FALSE")
+    (Netlist_TAB "0")
+    (ANNOTATE_Scope "0")
+    (ANNOTATE_Mode "1")
+    (ANNOTATE_Action "0")
+    (Annotate_Page_Order "0")
+    (ANNOTATE_Reset_References_to_1 "FALSE")
+    (ANNOTATE_No_Page_Number_Change "FALSE")
+    (ANNOTATE_Property_Combine "{Value}{Source Package}{POWER_GROUP}")
+    (ANNOTATE_IncludeNonPrimitive "FALSE")
+    (ANNOTATE_PreserveDesignator "FALSE")
+    (ANNOTATE_PreserveUserEdits "FALSE")
+    (ANNOTATE_Refdes_Control_Required "FALSE")
+    (Update_Instace_for_External_Design "FALSE")
+    (Annotate_type "Default")
+    (width_pages "100")
+    (width_start "80")
+    (width_End "80")
+    (BOM_Scope "0")
+    (BOM_Mode "0")
+    (BOM_Report_File
+       "E:\ONEDRIVE\HIPNUC\超核科技设计相关\HI2XXDKV2\HI2XXDK.BOM")
+    (BOM_Merge_Include "FALSE")
+    (BOM_Property_Combine_7.0
+       " {Item}\t{Quantity}\t{Reference}\t{Value}\t{PCB Footprint}\t{VENDOR}\t{Part Number}\t{Note}")
+    (BOM_Header
+       "Item\tQuantity\tReference\tPart\tFootprint\tVendor\tVendor P/N\tNote")
+    (BOM_Include_File
+       "E:\ONEDRIVE\HIPNUC\超核科技设计相关\HI2XXDKV2\HI2XXDK.INC")
+    (BOM_Include_File_Combine_7.0 "{Item}\t{Quantity}\t{Reference}\t{Value}")
+    (BOM_One_Part_Per_Line "FALSE")
+    (Open_BOM_in_Excel "TRUE")
+    (BOM_View_Output "FALSE"))
+  (Folder "Outputs"
+    (File ".\hi-219mdk.drc"
+      (Type "Report"))
+    (File ".\allegro\pstxnet.dat"
+      (Type "Report")
+      (DisplayName "pstxnet.dat"))
+    (File ".\allegro\pstxprt.dat"
+      (Type "Report")
+      (DisplayName "pstxprt.dat"))
+    (File ".\allegro\pstchip.dat"
+      (Type "Report")
+      (DisplayName "pstchip.dat"))
+    (File ".\hi2xxdk.bom"
+      (Type "Report")))
+  (Folder "Referenced Projects")
+  (GlobalState
+    (FileView
+      (Path "Design Resources")
+      (Path "Design Resources" ".\hi2xxdk.dsn")
+      (Path "Design Resources" ".\hi2xxdk.dsn" "HI2XXDK")
+      (Path "Design Resources" "Library")
+      (Path "Design Resources" "Library" "..\cadence_library\olb\connector.olb")
+      (Path "Outputs")
+      (Select "Design Resources" ".\hi2xxdk.dsn" "HI2XXDK" "MAIN"))
+    (HierarchyView)
+    (Doc
+      (Type "COrCapturePMDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 0 200 0 213"))
+      (Tab 0))
+    (Doc
+      (Type "COrPartDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 0 1005 0 322")
+        (PackageScroll "0 0")
+        (PackageZoom "1")
+        (PartPackage "Part")
+        (Scroll "1027 267")
+        (Zoom "318"))
+      (Path
+         "E:\ONEDRIVE\HIPNUC\超核科技设计相关\CADENCE_LIBRARY\OLB\COMPONENT.OLB")
+      (Package "ESD05V14T"))
+    (Doc
+      (Type "COrPartDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 130 1135 130 452")
+        (PackageScroll "0 0")
+        (PackageZoom "1")
+        (PartPackage "Part")
+        (Scroll "1027 139")
+        (Zoom "318"))
+      (Path
+         "E:\ONEDRIVE\HIPNUC\超核科技设计相关\CADENCE_LIBRARY\OLB\COMPONENT.OLB")
+      (Package "ACS5200HFAUWB"))
+    (Doc
+      (Type "COrPartDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 52 1382 52 374")
+        (PackageScroll "0 0")
+        (PackageZoom "1")
+        (PartPackage "Part")
+        (Scroll "67 326")
+        (Zoom "126"))
+      (Path "E:\ONEDRIVE\HIPNUC\超核科技设计相关\CADENCE_LIBRARY\OLB\IC.OLB")
+      (Package "GD32F303CGT6"))
+    (Doc
+      (Type "COrPartDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 26 1031 26 348")
+        (PackageScroll "0 0")
+        (PackageZoom "1")
+        (PartPackage "Part")
+        (Scroll "1027 267")
+        (Zoom "318"))
+      (Path "E:\ONEDRIVE\HIPNUC\超核科技设计相关\CADENCE_LIBRARY\OLB\IC.OLB")
+      (Package "TMUX1308"))
+    (Doc
+      (Type "COrPartDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 26 1323 26 348")
+        (PackageScroll "0 0")
+        (PackageZoom "1")
+        (PartPackage "Part")
+        (Scroll "639 140")
+        (Zoom "188"))
+      (Path
+         "E:\ONEDRIVE\HIPNUC\超核科技设计相关\CADENCE_LIBRARY\OLB\CONNECTOR.OLB")
+      (Package "MP_Programer_MUX"))
+    (Doc
+      (Type "COrPartDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 0 1005 0 322")
+        (PackageScroll "0 0")
+        (PackageZoom "1")
+        (PartPackage "Part")
+        (Scroll "2244 713")
+        (Zoom "660"))
+      (Path
+         "E:\ONEDRIVE\HIPNUC\超核科技设计相关\CADENCE_LIBRARY\OLB\CONNECTOR.OLB")
+      (Package "TYPE C 12P"))
+    (Doc
+      (Type "COrSchematicDoc")
+      (Frame
+        (Placement "44 2 3 -1 -1 -8 -31 0 1297 0 322")
+        (Scroll "-212 90")
+        (Zoom "100")
+        (Occurrence "/"))
+      (Path "E:\ONEDRIVE\HIPNUC\超核科技设计相关\HI2XXDKV2\HI2XXDK.DSN")
+      (Schematic "HI2XXDK")
+      (Page "MAIN")))
+  (PartMRUSelector
+    (TestPoint
+      (FullPartName "TestPoint.Normal")
+      (LibraryName
+         "E:\ONEDRIVE\HIPNUC\超核科技设计相关\CADENCE_LIBRARY\OLB\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("HEADER 8"
+      (FullPartName "HEADER 8.Normal")
+      (LibraryName
+         "C:\CADENCE\CADENCE_SPB_16.6\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("HEADER 9"
+      (FullPartName "HEADER 9.Normal")
+      (LibraryName
+         "C:\CADENCE\CADENCE_SPB_16.6\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("HEADER 10"
+      (FullPartName "HEADER 10.Normal")
+      (LibraryName
+         "C:\CADENCE\CADENCE_SPB_16.6\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("HEADER 15"
+      (FullPartName "HEADER 15.Normal")
+      (LibraryName
+         "C:\CADENCE\CADENCE_SPB_16.6-2015\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("HEADER 14"
+      (FullPartName "HEADER 14.Normal")
+      (LibraryName
+         "C:\CADENCE\CADENCE_SPB_16.6-2015\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("CONN PLUG 5x2"
+      (FullPartName "CONN PLUG 5x2.Normal")
+      (LibraryName
+         "C:\CADENCE\CADENCE_SPB_16.6-2015\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("CONN PLUG 5"
+      (FullPartName "CONN PLUG 5.Normal")
+      (LibraryName
+         "C:\CADENCE\CADENCE_SPB_16.6-2015\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    (HOLE
+      (FullPartName "HOLE.Normal")
+      (LibraryName
+         "D:\ONEDRIVE\HIPNUC\超核科技设计相关\CADENCE_LIBRARY\OLB\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    (MICRO-USB
+      (FullPartName "MICRO-USB.Normal")
+      (LibraryName
+         "D:\ONEDRIVE\HIPNUC\超核科技设计相关\CADENCE_LIBRARY\OLB\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("CONNECTOR DB9"
+      (FullPartName "CONNECTOR DB9.Normal")
+      (LibraryName
+         "C:\CADENCE\CADENCE_SPB_16.6-2015\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("SW DIP-3"
+      (FullPartName "SW DIP-3.Normal")
+      (LibraryName
+         "C:\CADENCE\CADENCE_SPB_16.6-2015\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
+      (DeviceIndex "0"))
+    ("HEADER 7"
+      (FullPartName "HEADER 7.Normal")
+      (LibraryName
+         "D:\ONEDRIVE\HIPNUC\超核科技设计相关\CADENCE_LIBRARY\OLB\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("HEADER 7X2"
+      (FullPartName "HEADER 7X2.Normal")
+      (LibraryName
+         "D:\CADENCE\CADENCE\CADENCE_SPB_16.6-2015\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("HEADER 3X2"
+      (FullPartName "HEADER 3X2.Normal")
+      (LibraryName
+         "D:\CADENCE\CADENCE\CADENCE_SPB_16.6-2015\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    (HEADER2x6
+      (FullPartName "HEADER2x6.Normal")
+      (LibraryName "E:\超核科技设计相关\CADENCE_LIBRARY\OLB\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("HEADER 5X2"
+      (FullPartName "HEADER 5X2.Normal")
+      (LibraryName "E:\超核科技设计相关\CADENCE_LIBRARY\OLB\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    (PLCC28_DIP
+      (FullPartName "PLCC28_DIP.Normal")
+      (LibraryName "E:\超核科技设计相关\CADENCE_LIBRARY\OLB\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    (HI219M
+      (FullPartName "HI219M.Normal")
+      (LibraryName "E:\超核科技设计相关\CADENCE_LIBRARY\OLB\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    ("DIODE TVS"
+      (FullPartName "DIODE TVS.Normal")
+      (LibraryName "E:\超核科技设计相关\CADENCE_LIBRARY\OLB\COMPONENT.OLB")
+      (DeviceIndex "0"))
+    (Capacity_TANT
+      (FullPartName "Capacity_TANT.Normal")
+      (LibraryName "E:\超核科技设计相关\CADENCE_LIBRARY\OLB\COMPONENT.OLB")
+      (DeviceIndex "0"))
+    (Fuse
+      (FullPartName "Fuse.Normal")
+      (LibraryName "E:\超核科技设计相关\CADENCE_LIBRARY\OLB\COMPONENT.OLB")
+      (DeviceIndex "0"))
+    (SI2301BSD
+      (FullPartName "SI2301BSD.Normal")
+      (LibraryName "E:\超核科技设计相关\CADENCE_LIBRARY\OLB\COMPONENT.OLB")
+      (DeviceIndex "0"))
+    (SP0503BAHT
+      (FullPartName "SP0503BAHT.Normal")
+      (LibraryName "E:\超核科技设计相关\CADENCE_LIBRARY\OLB\COMPONENT.OLB")
+      (DeviceIndex "0"))
+    (GND
+      (LibraryName
+         "D:\CADENCE\CADENCE\CADENCE_SPB_16.6-2015\TOOLS\CAPTURE\LIBRARY\CAPSYM.OLB")
+      (DeviceIndex "0")))
+  (LastUsedLibraryBrowseDirectory
+     "C:\Cadence\Cadence_SPB_16.6-2015\tools\capture\library")
+  (MPSSessionName "Dell")
+  (ISPCBBASICLICENSE "false"))

@@ -1,0 +1,35 @@
+  Revised: Thursday, January 09, 2020
+          Revision: 
+
+
+
+
+
+
+
+Bill Of Materials           June 3,2020      17:20:54	Page1
+
+Item	Quantity	Reference	Part	Footprint	Vendor	Vendor P/N	Note
+______________________________________________
+
+ 1	3	C1,C4,C6	1uF	C0603			
+ 2	2	C2,C5	0.1uF	C0603			
+ 3	1	C3	10uF	SC1206			
+ 4	1	D1	RED	D0603			
+ 5	1	D2	GREEN	D0603			
+ 6	4	H1,H2,H3,H4	HOLE	HOLE-2-MM			
+ 7	1	J1	MINI-USB	MICRO-USB-B-1051640001			
+ 8	1	J2	4 HEADER	HEADER1X4-2_54mm			
+ 9	1	J3	4 HEADER	XH2_54-4P_SMD_180			
+ 10	1	J6	PLCC28	PLCC28_DIP			
+ 11	1	J7	HEADER 5	HEADER1X5-1_27mm			
+ 12	2	J8,J9	HEADER 8	HEADER1X8-2_54mm			
+ 13	2	R1,R3	1K	R0603			
+ 14	2	R2,R4	4.7K	R0603			
+ 15	2	R5,R6	330R	R0603			
+ 16	3	TP1,TP2,TP3	TestPoint	TP-C-40			
+ 17	1	U1	USBLC6-2SC6	SOT23-6-0_95			
+ 18	1	U2	AP2331TD	SOT23-3-0_95			
+ 19	1	U3	CP2104	QFN-24_4X4mm_p0_5			
+ 20	1	U4	XC6210-3.0	SOT23-5-0_95			
+ 21	1	U5	HI2XX	HI226			
